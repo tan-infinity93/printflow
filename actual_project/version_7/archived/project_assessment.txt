@@ -1,0 +1,155 @@
+If you want next:
+
+Snap-to-grid in mm
+Bleed / trim / safe margins
+CMYK enforcement
+print bleed guides
+
+envelope sizes (C4/C5)
+print DPI verification
+export to PDF (server-side safe)
+
+-----
+https://www.allcolourenvelopes.co.uk/pages/envelope-size-guide-1
+
+check dotted lines for added elements and remove them before canvas capture --
+cross check edit hightlight for warning of same
+on zoom reset, also reset rulers on X and Y.
+
+maintain counter for text n images, fyi n display same
+
+lock existing elements placed in canvas and also give a toggle for same
+
+adjust premade template spacing for a4/c5 page types - done
+
+warn if same text / img obj lays 1 over another
+
+save template to download and also to object store - done
+
+give an option to download audit history - done (refine same)
+
+download help manual as well - done (refine same)
+
+fix raw import and also decide on uniform format for export and
+import of raw json data
+
+also encrypt raw data if need be - think on same
+
+-----------------------------------------
+Here's a structured set of improvement pointers across all files:
+
+---
+
+**Architecture & Code Organisation**
+
+- `scripts.js` is massive (~1750 lines). The DB layer (`initDB`, `saveRecordToDB`, `getAllRecordsFromDB`, etc.), zoom logic, grid logic, element builders, and modal helpers are all in one file. These should be split into separate modules (`db.js`, `zoom.js`, `elements.js`, `modals.js`).
+- `SVG_NS` is redefined in both `layout.js` and `imports.js` — it's already declared as a `const` in `scripts.js`. Single source of truth needed.
+- `STORE_NAME` is both a module-level `let` in `scripts.js` and used as a named parameter via the pattern `(STORE_NAME = storeName)` throughout. This is actually mutating the global on every call — an anti-pattern that will cause subtle bugs under async conditions.
+- `pageDimensions` is defined in `scripts.js` but also partially duplicated as a local object inside `layout.js`'s `setGridSize`. Remove the duplicate and reference the canonical one.
+
+---
+
+**State Management**
+
+- `sessionStorage` is used heavily but re-parsed from JSON on every access (`JSON.parse(sessionStorage.getItem(...))`) in multiple places across files. A thin state wrapper (get/set helper) would reduce noise and risk of parse errors.
+- Dark mode state is stored in `sessionStorage` but on page reload there is no code that reads it back and re-applies the `dark-mode` class. The toggle works in-session only, not across reloads.
+- `stats` in `sessionStorage` gets reset on every `onloadInit()` call, meaning export/import counts are lost on any canvas reset. The stats reset and the layout reset are conflated inside `setDefaults`.
+
+---
+
+**Performance**
+
+- `stats.js` polls `checkStorage()`, `loadAuditHistory()`, and `loadVersionHistory()` every **5 seconds** via `setInterval`. Each call opens a new IndexedDB transaction. This is expensive — use event-driven updates instead (update the display only when an actual write happens).
+- `initDB()` is called fresh on **every single DB operation** — there's no DB connection caching. The connection should be opened once and reused.
+- `buildRulers()` redraws all ruler tick marks from scratch every time the page size changes. These could be cached or built via SVG `<pattern>` like the grid.
+
+---
+
+**Bugs & Logical Issues**
+
+- In `exports.js` → `confirmRawExportFile`: if `fileName == ""` a toast is shown, but execution does **not return** — the code continues and tries to create a blob with an empty filename.
+- In `stats.js` → `loadAuditHistory`: the "No Audit Entry Found" message is inside the `forEach` loop on an empty array — it will **never render** because `forEach` on an empty array does nothing. The empty-array branch needs to push the fallback HTML directly.
+- In `imports.js` → `loadSelectedTemplateFile`: `y` for the table is set as `element.x` (copy-paste bug: `let y = element.x`).
+- `toggleSafeZone` uses `style.display === "none" ? "block" : "none"` on an SVG `<rect>`. SVG elements don't respond to `display: block` — use `visibility` or the `display` attribute directly via `setAttribute`.
+- `changeSafeZoneSize` passes `svgRoot` (the full SVG) to `setSafeZone`, but `setSafeZone` expects the `pageGroup` `<g>` element since it appends the safe zone rect inside the page group. This would place the rect in the wrong coordinate space.
+
+---
+
+**UX / UI**
+
+- `previewPrint` is a 5-second auto-reverting timeout — there's no way for the user to cancel or extend it. This is confusing UX; a modal or explicit "Exit Preview" button would be better.
+- Version history items in `stats.js` render as `${log["id"].slice(0, 8)} .....` with an `onclick` that just does `window.alert('Loading Version...')`. This is a placeholder that needs actual restore functionality.
+- The help content in `help.js` is hard-coded as a JS object that then gets rendered to tables. This makes the content harder to maintain and misses accessibility benefits of semantic HTML. Consider moving it to static HTML or a data-driven accordion component.
+- Dark mode only toggles `body.dark-mode` but there's no CSS cascade defined in `style.css` (not provided fully) for SVG children — grid lines, rulers, and page rect likely stay white/light in dark mode.
+
+---
+
+**Security / Data Hygiene**
+
+- Passwords are stored and queried in plain text in IndexedDB (`checkLoginUser` does a direct `[username, password]` index lookup). Even for a local app, this should at minimum be hashed.
+- `loadSelectedTemplateFile` calls `alert(JSON.stringify(templateData))` — a debug statement left in production code path.
+- `LETTER_LAYOUT_ELEMENTS` in `letters.js` contains real personal details (name, email, address). These should be replaced with placeholder tokens like `{{senderName}}` that get substituted at render time.
+- Template IDs are passed directly into `innerHTML` via `onclick="loadSelectedTemplateFile('${template.id}')"` in `scripts.js`. If an ID ever contains a quote or special char this breaks — use `addEventListener` and `data-` attributes instead.
+
+---
+
+**Dead / Commented Code**
+
+- Large blocks of commented-out code exist throughout `scripts.js`, `letters.js`, and `exports.js` (version history, old canvas layout, old coordinate extraction). These should be removed and tracked in git history instead.
+- `saveAppSettings` in `exports.js` builds an `appSettings` object but never persists or returns it — effectively a no-op.
+- `showVersionHistory` in `exports.js` is partially implemented (loops but also sets `versionHistoryDiv.innerText` inside the loop, overwriting it each iteration) and is never called live.
+-----------------------------------------
+Looking at what's already built, here's how I read the feature landscape:
+
+---
+
+**What's Clearly Working / Exists**
+
+- SVG canvas with page size switching (A4, A5, C4, DL, C5, Num10)
+- Rulers, grid with size control, safe zone with margin control
+- Text boxes, image boxes, table boxes — draggable and interactive
+- Zoom in/out/reset
+- Export as SVG or JSON, Import from SVG or JSON
+- Template Gallery — save, load, delete custom templates
+- Audit log via IndexedDB
+- Version save (partial)
+- Dark mode toggle
+- User login/logout (basic, local)
+- Help manual + audit log PDF download via jsPDF
+- Toast notification system
+- Pointer coordinate tracking in mm
+- Letter and Invoice presets (A4/A5/C4)
+
+---
+
+**Features That Are Half-Built**
+
+- **Version History** — saving works, but restore from a version is a stub (`window.alert('Loading Version...')`). The UI shows truncated IDs with no meaningful restore action.
+- **Print Preview** — exists but is just a 5-second auto-reverting zoom. No actual print/PDF output from it.
+- **App Settings persistence** — `saveAppSettings` builds the object but never saves it. Left/right panel visibility resets on reload.
+- **Template loading from gallery** — text and table load, but image elements use `URL.createObjectURL(element.src)` on a stored File object, which won't survive IndexedDB serialization. Images will silently fail on reload.
+- **Custom Template Creator** — the form and validation exist but large portions are commented out, suggesting it was being rebuilt.
+
+---
+
+**Features That Are Missing but Clearly Intended**
+
+- **PDF export** — jsPDF is loaded and used for the help manual, but there's no "Save as PDF" for the actual canvas. The UI mentions it in the help text ("save to pdf file") but the function doesn't exist yet.
+- **Pro license / storage tier** — the help text references a "pro license" for extended storage and auto-save. Nothing in the code implements this yet.
+- **Auto-save** — mentioned in help but absent. The version save is manual only.
+- **Multi-page support** — the engine is single-page. For letter/invoice use cases, multi-page is a natural next need.
+- **Undo / Redo** — no history stack exists for canvas actions. Once you delete or move an element, it's gone.
+- **Element layering (z-order)** — no bring-forward / send-back controls visible in the codebase.
+- **Text formatting controls** — font family, size, bold, italic, colour are not exposed as UI controls. Text content is editable but styling is fixed at the SVG level.
+- **Image cropping / resizing handles** — image boxes are added but no aspect-ratio-aware resize handle logic was seen.
+- **Snap to grid** — grid is visual only, no snap-on-drag behaviour.
+- **Alignment tools** — no align left/right/centre/distribute for multiple elements.
+- **Collaboration or cloud sync** — everything is localStorage/IndexedDB only, entirely local.
+
+---
+
+**Bigger Picture Assessment**
+
+The engine is at roughly **~50-60% of a usable v1**. The core canvas and element pipeline is solid. The gap is mostly in the *output side* (PDF, print), *editing quality* (undo, snap, formatting), and *persistence reliability* (version restore, image storage). The letter/invoice presets suggest the primary use case is **print document composition**, which makes the missing PDF export the most critical gap to close first.
+
+What direction are you thinking of tackling next?
