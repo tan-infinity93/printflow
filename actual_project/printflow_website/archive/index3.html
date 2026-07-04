@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintFlow — Professional Document Layouts with Press Precision</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Design and compose print-safe documents online. PrintFlow bridges the gap between web design and press accuracy with live bleed margins, snap-to-grid in mm, and CMYK color space checks.">
+    <meta name="keywords" content="print safe layout, cmyk editor, envelope template editor, bleed margins, a4 layout builder">
+    <meta name="author" content="PrintFlow Team">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Custom Light Theme Style Sheet -->
+    <link rel="stylesheet" href="index3.css">
+</head>
+<body>
+    <!-- Background grid lines for the architectural drafting board look -->
+    <div class="drafting-grid-pattern" aria-hidden="true"></div>
+    <div class="light-glow-blur blur-one" aria-hidden="true"></div>
+    <div class="light-glow-blur blur-two" aria-hidden="true"></div>
+
+    <!-- Header Navigation (Light Glass) -->
+    <nav class="navbar navbar-expand-lg navbar-light site-header-v3 fixed-top">
+        <div class="container">
+            <a href="#" class="navbar-brand brand-logo-v3" id="nav3-home">
+                <div class="logo-icon-v3"><i class="fa-solid fa-layer-group"></i></div>
+                <span class="logo-text-v3">Print<span class="gradient-text-v3">Flow</span></span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent3" aria-controls="navbarContent3" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarContent3">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 main-nav-list-v3 me-lg-4">
+                    <li class="nav-item"><a href="#features" class="nav-link">Capabilities</a></li>
+                    <li class="nav-item"><a href="#playground" class="nav-link">Simulator</a></li>
+                    <li class="nav-item"><a href="#cmyk" class="nav-link">Gamut Checker</a></li>
+                    <li class="nav-item"><a href="#specs" class="nav-link">Presets</a></li>
+                    <li class="nav-item"><a href="#faq" class="nav-link">FAQ</a></li>
+                </ul>
+                
+                <div class="d-flex align-items-center gap-2 header-actions-v3">
+                    <a href="../version_7/index.html" class="btn btn-secondary btn-sm px-4 rounded-pill" id="btn-login-shortcut3">Log In</a>
+                    <a href="../version_7/index.html" class="btn btn-primary btn-sm px-4 rounded-pill" id="btn-launch-header3">Launch Editor</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main style="margin-top: 90px;">
+        <!-- Hero Section -->
+        <section class="hero-section-v3" id="intro">
+            <div class="container">
+                <div class="row align-items-center gy-5">
+                    <div class="col-lg-5 hero-content-col-v3">
+                        <div class="hero-content-v3 text-start">
+                            <span class="eyebrow-tag-v3 mb-3"><span class="badge-dot-v3"></span> Blueprint Composition</span>
+                            <h1 class="hero-title-v3 text-dark fw-bold mb-4">
+                                Web layout, with <em>press precision</em>.
+                            </h1>
+                            <p class="hero-subtitle-v3 text-muted mb-5">
+                                Design invoices, letterheads, and envelope envelopes on a live-guided canvas matching exact paper sizes, physical grids in millimeters, and CMYK color profiles.
+                            </p>
+                            <div class="d-flex flex-wrap gap-3 hero-actions-v3">
+                                <a href="../version_7/index.html" class="btn btn-primary btn-lg rounded-pill px-4" id="btn-hero-launch3">
+                                    Start Composing Free
+                                </a>
+                                <a href="#playground" class="btn btn-secondary btn-lg rounded-pill px-4" id="btn-hero-learn3">
+                                    Try Simulator
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-7 hero-visual-col-v3 ps-lg-5">
+                        <!-- Interactive Canvas Simulator (Light Theme Card) -->
+                        <div class="playground-card-v3" id="playground">
+                            <div class="playground-header-v3 d-flex justify-content-between align-items-center px-4 py-3">
+                                <div class="playground-title-v3 text-secondary small fw-bold text-uppercase">
+                                    <i class="fa-solid fa-arrows-spin me-1"></i> Press Trim Simulator
+                                </div>
+                                <div class="preset-selector-wrapper-v3">
+                                    <select id="sheet-preset3" class="form-select form-select-sm preset-select-v3" aria-label="Paper Preset">
+                                        <option value="a4">A4 Sheet (210 × 297 mm)</option>
+                                        <option value="c5">C5 Envelope (162 × 229 mm)</option>
+                                        <option value="dl">DL Envelope (110 × 220 mm)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Canvas Playground Body -->
+                            <div class="playground-body-v3 position-relative">
+                                <!-- Minimal Millimeter Coordinate indicators -->
+                                <div class="coord-indicator-v3 coord-x-indicator-v3 monospace" id="ruler-x3">0mm</div>
+                                <div class="coord-indicator-v3 coord-y-indicator-v3 monospace" id="ruler-y3">0mm</div>
+
+                                <div class="canvas-viewport w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <!-- Simulated Paper Sheet -->
+                                    <div class="sim-paper-v3" id="sim-paper3">
+                                        <!-- Safe margin guideline (inner magenta dashed) -->
+                                        <div class="sim-guide-v3 safe-guide-v3" id="guide-safe3">
+                                            <span class="guide-tag-v3 safe-tag-v3">Safe Limit</span>
+                                        </div>
+                                        <!-- Millimeter Grid Overlay -->
+                                        <div class="sim-grid-lines-v3" id="grid-lines3"></div>
+
+                                        <!-- Draggable Box Element -->
+                                        <div class="sim-element-v3" id="drag-element3">
+                                            <div class="drag-handle-v3"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
+                                            <div class="element-content-v3">
+                                                <div class="element-title-v3">Text Container</div>
+                                                <div class="element-text-v3">Local margin safety</div>
+                                            </div>
+                                            <div class="element-metrics-v3 font-mono">
+                                                <span id="metric-w3">120</span>×<span id="metric-h3">45</span> mm
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diagnostics Console -->
+                            <div class="playground-console-v3 p-4 d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                                <div class="d-flex flex-column">
+                                    <span class="console-label-v3 text-muted small fw-bold text-uppercase">Top-Left Coordinate</span>
+                                    <div class="console-value-v3 text-dark fw-bold monospace mt-1" id="coords-display3">X: 15.0mm | Y: 15.0mm</div>
+                                </div>
+                                
+                                <div class="status-indicator-v3 px-3 py-1 rounded-pill" id="status-badge3">
+                                    <span id="status-text3">SAFE FOR PRINT</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Balanced Capabilities Grid (4 clean cards) -->
+        <section class="features-section-v3 py-6" id="features">
+            <div class="container py-4">
+                <div class="section-header text-center mb-6 max-width-md mx-auto">
+                    <span class="section-eyebrow text-uppercase text-primary fw-bold monospace">Platform Features</span>
+                    <h2 class="section-title text-dark fw-bold mt-2">Precision-guided document layout tools</h2>
+                    <p class="section-description text-muted mt-3">
+                        Unlike standard pixel builders, PrintFlow focuses on physical metrics and warning checks to safeguard templates from print trim issues.
+                    </p>
+                </div>
+                
+                <div class="row g-4 features-grid-v3">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card-v3 p-4 h-100">
+                            <div class="feature-icon-v3 mb-3"><i class="fa-solid fa-crop-simple"></i></div>
+                            <h3 class="feature-title text-dark fs-5 fw-bold mb-2">Bleed Margin Guards</h3>
+                            <p class="feature-text text-muted small mb-0">
+                                Visual overlays flag text blocks placed too close to paper trim limits to avoid blade cut issues.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card-v3 p-4 h-100">
+                            <div class="feature-icon-v3 mb-3"><i class="fa-solid fa-ruler-combined"></i></div>
+                            <h3 class="feature-title text-dark fs-5 fw-bold mb-2">Millimeter Grids</h3>
+                            <p class="feature-text text-muted small mb-0">
+                                Snap guidelines and canvas boundaries are calibrated to real ISO paper specifications.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card-v3 p-4 h-100">
+                            <div class="feature-icon-v3 mb-3"><i class="fa-solid fa-sliders"></i></div>
+                            <h3 class="feature-title text-dark fs-5 fw-bold mb-2">CMYK Compliant</h3>
+                            <p class="feature-text text-muted small mb-0">
+                                Check CMYK percentages to make sure colors convert correctly without losing saturation on offset press.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card-v3 p-4 h-100">
+                            <div class="feature-icon-v3 mb-3"><i class="fa-solid fa-shield-halved"></i></div>
+                            <h3 class="feature-title text-dark fs-5 fw-bold mb-2">100% Local Privacy</h3>
+                            <p class="feature-text text-muted small mb-0">
+                                Layout designs, branding, and passwords are saved completely on-device in browser IndexedDB cache.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Color Gamut Inspector Section (Light Card) -->
+        <section class="cmyk-section-v3 py-6" id="cmyk">
+            <div class="container py-4">
+                <div class="row align-items-center gy-5">
+                    <div class="col-lg-5 order-lg-1">
+                        <div class="gamut-card-v3 p-4 rounded-lg">
+                            <div class="gamut-preview-box-v3 rounded p-3 d-flex align-items-end" id="gamut-preview3">
+                                <span class="gamut-label-v3 monospace text-dark" id="gamut-rgb-val3">rgb(11, 188, 214)</span>
+                            </div>
+                            
+                            <div class="gamut-sliders-v3 mt-4 d-flex flex-column gap-3">
+                                <!-- Cyan Slider -->
+                                <div class="slider-row">
+                                    <div class="slider-info d-flex justify-content-between font-sm mb-1">
+                                        <span class="slider-name text-muted">Cyan</span>
+                                        <span class="slider-value text-dark monospace" id="val-c3">80%</span>
+                                    </div>
+                                    <input type="range" id="slider-c3" min="0" max="100" value="80" class="form-range cmyk-slider slider-cyan">
+                                </div>
+                                
+                                <!-- Magenta Slider -->
+                                <div class="slider-row">
+                                    <div class="slider-info d-flex justify-content-between font-sm mb-1">
+                                        <span class="slider-name text-muted">Magenta</span>
+                                        <span class="slider-value text-dark monospace" id="val-m3">10%</span>
+                                    </div>
+                                    <input type="range" id="slider-m3" min="0" max="100" value="10" class="form-range cmyk-slider slider-magenta">
+                                </div>
+                                
+                                <!-- Yellow Slider -->
+                                <div class="slider-row">
+                                    <div class="slider-info d-flex justify-content-between font-sm mb-1">
+                                        <span class="slider-name text-muted">Yellow</span>
+                                        <span class="slider-value text-dark monospace" id="val-y3">5%</span>
+                                    </div>
+                                    <input type="range" id="slider-y3" min="0" max="100" value="5" class="form-range cmyk-slider slider-yellow">
+                                </div>
+                                
+                                <!-- Key Black Slider -->
+                                <div class="slider-row">
+                                    <div class="slider-info d-flex justify-content-between font-sm mb-1">
+                                        <span class="slider-name text-muted">Key (Black)</span>
+                                        <span class="slider-value text-dark monospace" id="val-k3">15%</span>
+                                    </div>
+                                    <input type="range" id="slider-k3" min="0" max="100" value="15" class="form-range cmyk-slider slider-key">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7 pr-lg-5">
+                        <div class="cmyk-content-v3 text-start">
+                            <span class="section-eyebrow text-uppercase text-primary fw-bold monospace">CMYK Gamut Simulator</span>
+                            <h2 class="section-title text-dark fw-bold font-serif mt-2 mb-3">Simulate ink pigments before printing.</h2>
+                            <p class="section-description text-muted mb-4">
+                                Computer screens emit RGB light. Paper printing absorbs CMYK ink. Mix values using the sliders to see a matte paper simulation and get instant alerts if the ink coverage exceeds safe limits.
+                            </p>
+                            
+                            <div class="gamut-indicator-bar-v3 out-of-gamut d-flex p-3 rounded" id="gamut-warning-box3">
+                                <div class="warning-icon text-warning me-3"><i class="fa-solid fa-circle-exclamation"></i></div>
+                                <div class="warning-details">
+                                    <h4 class="warning-title text-dark fw-semibold mb-1">Ink Limit Monitor</h4>
+                                    <p class="warning-desc text-muted small mb-0" id="gamut-warning-text3">Mix metrics are within typical coated stock gamuts.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Balanced Technical Presets Layout (Clean grid cards instead of dense tables) -->
+        <section class="specs-section-v3 py-6" id="specs">
+            <div class="container py-4">
+                <div class="section-header text-center mb-6 max-width-md mx-auto">
+                    <span class="section-eyebrow text-uppercase text-primary fw-bold monospace">Standards Blueprint</span>
+                    <h2 class="section-title text-dark fw-bold mt-2">Calibrated Envelope & Page Presets</h2>
+                </div>
+                
+                <div class="row g-4">
+                    <!-- Preset Card 1 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="spec-preset-card p-4 text-center">
+                            <span class="preset-badge mb-3">A4 Sheet</span>
+                            <h4 class="preset-name text-dark fw-bold mb-2">A4 Standard</h4>
+                            <div class="preset-size monospace text-primary mb-3">210 × 297 mm</div>
+                            <p class="preset-desc text-muted small mb-0">Formal business correspondence, letterheads, and templates.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Preset Card 2 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="spec-preset-card p-4 text-center">
+                            <span class="preset-badge mb-3">A5 Sheet</span>
+                            <h4 class="preset-name text-dark fw-bold mb-2">A5 Sheet</h4>
+                            <div class="preset-size monospace text-primary mb-3">148 × 210 mm</div>
+                            <p class="preset-desc text-muted small mb-0">Marketing leaflets, flyers, and package inserts.</p>
+                        </div>
+                    </div>
+
+                    <!-- Preset Card 3 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="spec-preset-card p-4 text-center">
+                            <span class="preset-badge mb-3">Envelope</span>
+                            <h4 class="preset-name text-dark fw-bold mb-2">C5 Envelope</h4>
+                            <div class="preset-size monospace text-primary mb-3">162 × 229 mm</div>
+                            <p class="preset-desc text-muted small mb-0">Holds folded A4 letterheads or flat A5 envelopes.</p>
+                        </div>
+                    </div>
+
+                    <!-- Preset Card 4 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="spec-preset-card p-4 text-center">
+                            <span class="preset-badge mb-3">Envelope</span>
+                            <h4 class="preset-name text-dark fw-bold mb-2">DL Envelope</h4>
+                            <div class="preset-size monospace text-primary mb-3">110 × 220 mm</div>
+                            <p class="preset-desc text-muted small mb-0">Fits standard A4 letters folded into three parts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section (Clean & Airy Accordion - 3 items) -->
+        <section class="faq-section-v3 py-6" id="faq">
+            <div class="container py-4 max-width-md">
+                <div class="section-header text-center mb-5">
+                    <span class="section-eyebrow text-uppercase text-primary fw-bold monospace">FAQ</span>
+                    <h2 class="section-title text-dark fw-bold mt-2">Print Layout Mechanics</h2>
+                </div>
+
+                <div class="accordion accordion-flush faq-accordion-wrapper" id="faqAccordion3">
+                    <!-- FAQ 1 -->
+                    <div class="accordion-item faq-item-v3 mb-3 rounded border border-light-subtle">
+                        <h3 class="accordion-header" id="heading3One">
+                            <button class="accordion-button collapsed faq-trigger text-dark bg-transparent py-4 px-4 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3One" aria-expanded="false" aria-controls="collapse3One">
+                                How does PrintFlow convert screen pixels to physical millimeters?
+                            </button>
+                        </h3>
+                        <div id="collapse3One" class="accordion-collapse collapse" aria-labelledby="heading3One" data-bs-parent="#faqAccordion3">
+                            <div class="accordion-body text-muted px-4 pb-4 pt-0">
+                                We map 1 millimeter to exactly 3.78 screen pixels based on standard 96 DPI views. Exports scale the layout vector graphics back into physical dimensions.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="accordion-item faq-item-v3 mb-3 rounded border border-light-subtle">
+                        <h3 class="accordion-header" id="heading3Two">
+                            <button class="accordion-button collapsed faq-trigger text-dark bg-transparent py-4 px-4 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3Two" aria-expanded="false" aria-controls="collapse3Two">
+                                Does my layout data get uploaded online?
+                            </button>
+                        </h3>
+                        <div id="collapse3Two" class="accordion-collapse collapse" aria-labelledby="heading3Two" data-bs-parent="#faqAccordion3">
+                            <div class="accordion-body text-muted px-4 pb-4 pt-0">
+                                No. Layout templates, logos, and passwords are saved completely on-device in browser local IndexedDB databases.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="accordion-item faq-item-v3 mb-3 rounded border border-light-subtle">
+                        <h3 class="accordion-header" id="heading3Three">
+                            <button class="accordion-button collapsed faq-trigger text-dark bg-transparent py-4 px-4 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3Three" aria-expanded="false" aria-controls="collapse3Three">
+                                Why are trim lines and safe margins needed?
+                            </button>
+                        </h3>
+                        <div id="collapse3Three" class="accordion-collapse collapse" aria-labelledby="heading3Three" data-bs-parent="#faqAccordion3">
+                            <div class="accordion-body text-muted px-4 pb-4 pt-0">
+                                Trim lines represent paper trim edges. Bleed is an extra 3mm region preventing white boundaries if cuts shift. Safe zones keep important text from getting cropped.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section-v3 py-6 text-center">
+            <div class="container py-4">
+                <h2 class="cta-title text-dark fw-bold font-serif mb-3">Compose print-safe layouts.</h2>
+                <p class="cta-desc text-muted mx-auto mb-5">Open the browser editor immediately. Local caching, zero signups, completely private.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="../version_7/index.html" class="btn btn-primary btn-lg rounded-pill px-5" id="btn-cta-launch3">Launch Editor</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="site-footer-v3 py-5">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center gap-4 text-center">
+                <div class="footer-logo text-dark fw-bold fs-5">
+                    <i class="fa-solid fa-layer-group text-primary me-2"></i> PrintFlow
+                </div>
+                <div class="d-flex flex-wrap gap-4 justify-content-center">
+                    <a href="#features" class="text-muted small text-decoration-none hover-link">Capabilities</a>
+                    <a href="#playground" class="text-muted small text-decoration-none hover-link">Simulator</a>
+                    <a href="#cmyk" class="text-muted small text-decoration-none hover-link">Gamut</a>
+                    <a href="#faq" class="text-muted small text-decoration-none hover-link">FAQ</a>
+                </div>
+                <p class="copyright-text text-secondary small mb-0 mt-3">&copy; 2026 PrintFlow. Local client-side composition engine.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- App JavaScript Logic -->
+    <script src="app3.js"></script>
+</body>
+</html>

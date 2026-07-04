@@ -1,0 +1,6 @@
+# Ignore everything inside the actual_project folder
+actual_project/*
+
+# Do not ignore the printflow_website folder
+!actual_project/printflow_website/
+

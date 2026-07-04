@@ -1,0 +1,592 @@
+/* ==========================================================================
+   PrintFlow Landing Page V2 - Minimalist & Spacious Stylesheet
+   Theme: Air & Precision (Clean Technical Layout)
+   ========================================================================== */
+
+/* 1. Design Tokens & Root Variables */
+:root {
+    --bg-ink: #030712;
+    --card-ink: #0f172a;
+    
+    /* Press Ink Colors */
+    --cyan: #06b6d4;
+    --cyan-glow: rgba(6, 182, 212, 0.08);
+    --magenta: #f43f5e;
+    --magenta-glow: rgba(244, 63, 94, 0.08);
+    --yellow: #eab308;
+    
+    /* System Grayscale */
+    --text-main: #f8fafc;
+    --text-soft: #94a3b8;
+    --text-muted: #475569;
+    --border-ink: rgba(255, 255, 255, 0.05);
+    
+    /* Font stacks */
+    --font-serif: "Baskervville", Georgia, serif;
+    --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --font-mono: "Space Mono", monospace;
+    
+    --border-radius-lg: 20px;
+    --border-radius-md: 12px;
+    --border-radius-sm: 8px;
+}
+
+/* 2. Global Resets & Styling Overrides */
+body {
+    background-color: var(--bg-ink);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    position: relative;
+    letter-spacing: -0.01em;
+}
+
+/* Spacious helper class */
+.py-6 {
+    padding-top: 130px;
+    padding-bottom: 130px;
+}
+
+.mb-6 {
+    margin-bottom: 80px;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.03em;
+}
+
+h1 em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--cyan);
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+    font-weight: 400;
+}
+
+.monospace {
+    font-family: var(--font-mono);
+}
+
+/* Background Gradients (Muted) */
+.glow-blur-v2 {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(244, 63, 94, 0.05) 50%, transparent 100%);
+    filter: blur(120px);
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -2;
+    pointer-events: none;
+}
+
+.press-grid-pattern-v2 {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.008) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+}
+
+/* 3. Button Refinements */
+.btn {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    padding: 12px 28px;
+    border-radius: 30px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary {
+    background: var(--text-main);
+    color: var(--bg-ink);
+    border: none;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: #ffffff;
+    color: var(--bg-ink);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.08);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-soft);
+    border: 1px solid var(--border-ink);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-main);
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 0.95rem;
+}
+
+.btn-sm {
+    padding: 8px 20px;
+    font-size: 0.82rem;
+}
+
+/* 4. Navbar (Minimalist V2) */
+.site-header-v2 {
+    background: rgba(3, 7, 18, 0.7) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-ink);
+    padding-top: 18px;
+    padding-bottom: 18px;
+    height: 80px;
+}
+
+.brand-logo-v2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+
+.logo-icon-v2 {
+    color: var(--cyan);
+    font-size: 1.1rem;
+}
+
+.gradient-text-v2 {
+    color: var(--cyan);
+}
+
+.main-nav-list-v2 .nav-link {
+    color: var(--text-soft) !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin: 0 12px;
+    transition: color 0.2s;
+}
+
+.main-nav-list-v2 .nav-link:hover {
+    color: var(--text-main) !important;
+}
+
+/* 5. Hero Section V2 */
+.hero-section-v2 {
+    padding: 100px 0 120px;
+}
+
+.eyebrow-tag {
+    font-family: var(--font-mono);
+    color: var(--cyan);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: inline-block;
+}
+
+.hero-title-v2 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+}
+
+.hero-subtitle-v2 {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    max-width: 480px;
+}
+
+/* 6. Playground Card (Simulator V2) */
+.playground-card-v2 {
+    background: var(--card-ink);
+    border: 1px solid var(--border-ink);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    overflow: hidden;
+    transition: border-color 0.3s;
+}
+
+.playground-card-v2.colliding {
+    border-color: rgba(244, 63, 94, 0.4);
+}
+
+.playground-header-v2 {
+    background: rgba(15, 23, 42, 0.2);
+    border-bottom: 1px solid var(--border-ink);
+}
+
+.preset-select-v2 {
+    background-color: rgba(3, 7, 18, 0.8) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-ink) !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    border-radius: var(--border-radius-sm) !important;
+    cursor: pointer;
+    box-shadow: none !important;
+}
+
+.playground-body-v2 {
+    background: #090d16;
+    height: 310px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Minimal Coordinates Overlay */
+.coord-indicator {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.coord-x-indicator {
+    bottom: 16px;
+    left: 20px;
+}
+
+.coord-y-indicator {
+    bottom: 16px;
+    left: 100px;
+}
+
+/* Simulated Paper Page V2 */
+.sim-paper-v2 {
+    background: #ffffff;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+    position: relative;
+    transition: width 0.4s ease, height 0.4s ease;
+    overflow: hidden;
+}
+
+/* Simple Grid lines */
+.sim-grid-lines-v2 {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+    background-size: 10px 10px;
+    pointer-events: none;
+}
+
+.sim-guide-v2 {
+    position: absolute;
+    pointer-events: none;
+    border: 1px dashed transparent;
+}
+
+.safe-guide-v2 {
+    inset: 12px;
+    border-color: rgba(244, 63, 94, 0.4);
+}
+
+.guide-tag-v2 {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 7px;
+    padding: 1px 3px;
+    border-radius: 2px;
+    transform: scale(0.9);
+}
+
+.safe-tag-v2 {
+    background-color: var(--magenta);
+    color: #fff;
+    bottom: 2px;
+    right: 2px;
+}
+
+/* Draggable Element V2 (Minimalist) */
+.sim-element-v2 {
+    position: absolute;
+    width: 130px;
+    height: 54px;
+    background: rgba(6, 182, 212, 0.08);
+    border: 1.5px solid var(--cyan);
+    border-radius: 4px;
+    padding: 6px;
+    cursor: grab;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: none;
+    left: 20px;
+    top: 20px;
+}
+
+.sim-element-v2.dragging {
+    cursor: grabbing;
+    background: rgba(6, 182, 212, 0.12);
+}
+
+.sim-element-v2.alert-zone {
+    background: rgba(244, 63, 94, 0.08);
+    border-color: var(--magenta);
+}
+
+.drag-handle-v2 {
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--cyan);
+    color: #fff;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6px;
+}
+
+.sim-element-v2.alert-zone .drag-handle-v2 {
+    background: var(--magenta);
+}
+
+.element-title-v2 {
+    font-size: 8px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.element-text-v2 {
+    font-size: 7px;
+    color: #475569;
+}
+
+.element-metrics-v2 {
+    font-size: 6px;
+    text-align: right;
+    color: #0f172a;
+}
+
+/* Diagnostics Output V2 */
+.playground-console-v2 {
+    background: rgba(15, 23, 42, 0.3);
+    border-top: 1px solid var(--border-ink);
+}
+
+.console-label-v2 {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+}
+
+.console-value-v2 {
+    font-size: 0.95rem;
+}
+
+.status-indicator-v2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.status-indicator-v2.safe {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.status-indicator-v2.danger {
+    color: var(--magenta);
+    background: rgba(244, 63, 94, 0.08);
+}
+
+/* 7. Capabilities Grid (Minimal V2) */
+.features-section-v2 {
+    border-top: 1px solid var(--border-ink);
+}
+
+.feature-card-v2 {
+    transition: transform 0.25s;
+}
+
+.feature-card-v2:hover {
+    transform: translateY(-2px);
+}
+
+.feature-icon-v2 {
+    color: var(--cyan);
+    font-size: 1.35rem;
+}
+
+.feature-title {
+    letter-spacing: -0.01em;
+}
+
+/* 8. CMYK Color Gamut Section */
+.cmyk-section-v2 {
+    border-top: 1px solid var(--border-ink);
+    background-color: rgba(15, 23, 42, 0.15);
+}
+
+.gamut-card-v2 {
+    background: var(--bg-ink);
+    border: 1px solid var(--border-ink);
+    border-radius: var(--border-radius-lg);
+}
+
+.gamut-preview-box-v2 {
+    width: 100%;
+    height: 180px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    background-color: rgb(11, 188, 214);
+}
+
+.gamut-label-v2 {
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    font-size: 0.72rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Range sliders customization */
+.form-range::-webkit-slider-runnable-track {
+    background-color: rgba(255, 255, 255, 0.06);
+    height: 4px;
+    border-radius: 2px;
+}
+.form-range::-moz-range-track {
+    background-color: rgba(255, 255, 255, 0.06);
+    height: 4px;
+    border-radius: 2px;
+}
+
+.slider-cyan::-webkit-slider-thumb { background: var(--cyan); }
+.slider-cyan::-moz-range-thumb { background: var(--cyan); }
+
+.slider-magenta::-webkit-slider-thumb { background: var(--magenta); }
+.slider-magenta::-moz-range-thumb { background: var(--magenta); }
+
+.slider-yellow::-webkit-slider-thumb { background: var(--yellow); }
+.slider-yellow::-moz-range-thumb { background: var(--yellow); }
+
+.slider-key::-webkit-slider-thumb { background: #fff; }
+.slider-key::-moz-range-thumb { background: #fff; }
+
+.gamut-indicator-bar-v2 {
+    transition: all 0.3s;
+}
+
+.gamut-indicator-bar-v2.safe-gamut {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.gamut-indicator-bar-v2.safe-gamut .warning-icon {
+    color: #10b981;
+}
+
+.gamut-indicator-bar-v2.out-of-gamut {
+    background: rgba(234, 179, 8, 0.05);
+    border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.gamut-indicator-bar-v2.out-of-gamut .warning-icon {
+    color: var(--yellow);
+}
+
+/* 9. Accordion V2 Overrides */
+.faq-section-v2 {
+    border-top: 1px solid var(--border-ink);
+}
+
+.faq-item-v2 {
+    background: transparent !important;
+    border-color: var(--border-ink) !important;
+}
+
+.faq-trigger::after {
+    background-image: none !important;
+    content: "\f067"; /* plus */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: transform 0.25s ease;
+}
+
+.faq-trigger:not(.collapsed) {
+    color: var(--cyan) !important;
+}
+
+.faq-trigger:not(.collapsed)::after {
+    transform: rotate(45deg);
+    color: var(--cyan);
+}
+
+/* 10. CTA & Footer V2 */
+.cta-section {
+    border-top: 1px solid var(--border-ink);
+    background: var(--bg-ink);
+}
+
+.cta-title {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+}
+
+.cta-desc {
+    max-width: 500px;
+}
+
+.site-footer {
+    border-top: 1px solid var(--border-ink);
+    background-color: var(--bg-ink);
+}
+
+.hover-link {
+    transition: color 0.2s;
+}
+
+.hover-link:hover {
+    color: var(--cyan) !important;
+}
+
+/* ==========================================================================
+   11. Responsive Design
+   ========================================================================== */
+
+@media (max-width: 767px) {
+    .site-header-v2 {
+        height: auto;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .navbar-collapse {
+        background: var(--bg-ink);
+        border-top: 1px solid var(--border-ink);
+        margin-top: 10px;
+        padding: 20px 10px;
+    }
+    
+    .main-nav-list-v2 .nav-link {
+        margin: 8px 0;
+    }
+    
+    .header-actions-v2 {
+        margin-top: 16px;
+    }
+}

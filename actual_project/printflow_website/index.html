@@ -1,0 +1,1640 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            PrintFlow — Web-Based Document Editor with Press-Ready Precision
+        </title>
+
+        <!-- SEO Meta Tags -->
+        <meta
+            name="description"
+            content="Design and compose print-safe documents online. PrintFlow bridges the gap between web design and press accuracy with live bleed margins, snap-to-grid in mm, CMYK enforcement, and DPI verification."
+        />
+        <meta
+            name="keywords"
+            content="print safe layout, cmyk editor, envelope template editor, bleed margins, print-ready pdf export, desktop publishing online, svg to print, a4 invoice builder"
+        />
+        <meta name="author" content="PrintFlow Team" />
+        <meta name="robots" content="index, follow" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta
+            property="og:title"
+            content="PrintFlow — Press-Ready Document Precision on the Web"
+        />
+        <meta
+            property="og:description"
+            content="Live bleed guides, MM rulers, CMYK inspector, and templates that guarantee what you see is exactly what prints."
+        />
+        <meta
+            property="og:image"
+            content="https://printflow.io/assets/og-preview.png"
+        />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content="PrintFlow — Press-Ready Document Precision on the Web"
+        />
+        <meta
+            name="twitter:description"
+            content="Online layout editor with native trim, bleed, and safe margins for envelope and page design."
+        />
+
+        <!-- Bootstrap 5 CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+        />
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- FontAwesome Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        />
+
+        <!-- Custom Theme Style Sheet -->
+        <link rel="stylesheet" href="index.css" />
+
+        <!-- Script to prevent Theme Flash on load -->
+        <script>
+            (function () {
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "light") {
+                    document.documentElement.classList.add("light-mode");
+                }
+            })();
+        </script>
+    </head>
+    <body>
+        <!-- Background Accents -->
+        <div class="glow-blur blur-one" aria-hidden="true"></div>
+        <div class="glow-blur blur-two" aria-hidden="true"></div>
+        <div class="press-grid-pattern" aria-hidden="true"></div>
+
+        <!-- Header Navigation -->
+        <nav class="navbar navbar-expand-lg site-header fixed-top">
+            <div class="container">
+                <a href="#" class="navbar-brand brand-logo" id="nav-home">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <span class="logo-text"
+                        >Print<span class="gradient-text">Flow</span></span
+                    >
+                </a>
+
+                <button
+                    class="navbar-toggler border-0"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent"
+                    aria-controls="navbarContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 main-nav-list">
+                        <li class="nav-item">
+                            <a href="#playground" class="nav-link"
+                                >Interactive Demo</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a href="#cmyk" class="nav-link">Gamut Checker</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#features" class="nav-link"
+                                >Capabilities</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a href="#specs" class="nav-link">Specs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#pricing" class="nav-link">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#faq" class="nav-link">FAQ</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-3 header-actions">
+                        <!-- iOS Styled Theme Switcher -->
+                        <button
+                            class="theme-toggle-btn"
+                            id="theme-toggle-btn"
+                            aria-label="Toggle Theme"
+                        >
+                            <i class="fa-solid fa-sun icon-sun"></i>
+                            <i class="fa-solid fa-moon icon-moon"></i>
+                        </button>
+
+                        <a
+                            href="../version_7/index.html"
+                            class="btn btn-secondary btn-sm px-3"
+                            id="btn-login-shortcut"
+                            >Log In</a
+                        >
+                        <a
+                            href="../version_7/index.html"
+                            class="btn btn-primary btn-sm px-3"
+                            id="btn-launch-header"
+                            >Launch Editor
+                            <i class="fa-solid fa-arrow-right ms-1"></i
+                        ></a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main style="margin-top: 100px">
+            <!-- Hero Section with Thesis -->
+            <section class="hero-section py-4" id="intro">
+                <div class="container">
+                    <div class="section-box p-5 rounded-3xl">
+                        <div class="row align-items-center gy-5 w-100 m-0">
+                            <div class="col-lg-6 hero-content-col p-0 pe-lg-4">
+                                <div class="hero-content text-start">
+                                    <div class="badge-tag mb-4">
+                                        <span class="badge-dot"></span>
+                                        Web-to-Press Precision
+                                    </div>
+                                    <h1 class="hero-title fw-extrabold mb-3">
+                                        Where flexible web design meets
+                                        <em>printing press</em> accuracy.
+                                    </h1>
+                                    <p class="hero-subtitle mb-4">
+                                        Stop guessing if your templates will
+                                        clip. Compose invoices, envelopes, and
+                                        flyers on a live-guided canvas matching
+                                        exact paper sizes, physical grids in
+                                        millimeters, and CMYK color spaces.
+                                    </p>
+                                    <div
+                                        class="d-flex flex-wrap gap-3 mb-5 hero-actions"
+                                    >
+                                        <a
+                                            href="../version_7/index.html"
+                                            class="btn btn-primary btn-lg"
+                                            id="btn-hero-launch"
+                                        >
+                                            Start Composing Free
+                                            <i
+                                                class="fa-solid fa-square-plus ms-1"
+                                            ></i>
+                                        </a>
+                                        <a
+                                            href="#playground"
+                                            class="btn btn-tertiary btn-lg"
+                                            id="btn-hero-learn"
+                                        >
+                                            Try Interactive Canvas
+                                            <i
+                                                class="fa-solid fa-chalkboard-user ms-1"
+                                            ></i>
+                                        </a>
+                                    </div>
+
+                                    <div
+                                        class="hero-highlights d-flex align-items-center gap-4 border-top pt-4"
+                                    >
+                                        <div class="highlight-item">
+                                            <span
+                                                class="highlight-num d-block fw-bold"
+                                                >100%</span
+                                            >
+                                            <span class="highlight-label small"
+                                                >Local & Private</span
+                                            >
+                                        </div>
+                                        <div class="highlight-divider"></div>
+                                        <div class="highlight-item">
+                                            <span
+                                                class="highlight-num d-block fw-bold"
+                                                >&lt; 1mm</span
+                                            >
+                                            <span class="highlight-label small"
+                                                >Trim Deviation</span
+                                            >
+                                        </div>
+                                        <div class="highlight-divider"></div>
+                                        <div class="highlight-item">
+                                            <span
+                                                class="highlight-num d-block fw-bold"
+                                                >CMYK</span
+                                            >
+                                            <span class="highlight-label small"
+                                                >Enforced Gamut</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 hero-visual-col p-0 ps-lg-4">
+                                <!-- Interactive Signature Playground Container -->
+                                <div class="playground-card" id="playground">
+                                    <div
+                                        class="playground-header d-flex justify-content-between align-items-center px-4 py-3"
+                                    >
+                                        <div class="window-dots d-flex gap-2">
+                                            <span></span><span></span
+                                            ><span></span>
+                                        </div>
+                                        <div class="playground-title small">
+                                            <i
+                                                class="fa-solid fa-sliders me-1"
+                                            ></i>
+                                            printflow_simulator.io
+                                        </div>
+                                        <div class="preset-selector-wrapper">
+                                            <select
+                                                id="sheet-preset"
+                                                class="form-select form-select-sm preset-select"
+                                                aria-label="Paper Preset"
+                                            >
+                                                <option value="a4">
+                                                    A4 Sheet (210 × 297 mm)
+                                                </option>
+                                                <option value="c5">
+                                                    C5 Envelope (162 × 229 mm)
+                                                </option>
+                                                <option value="dl">
+                                                    DL Envelope (110 × 220 mm)
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Canvas Workspace Grid wrapper -->
+                                    <div
+                                        class="playground-body position-relative"
+                                    >
+                                        <!-- Ruler X -->
+                                        <div class="ruler ruler-x" id="ruler-x">
+                                            <div
+                                                class="ruler-marker"
+                                                style="left: 0%"
+                                            >
+                                                <span>0</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="left: 20%"
+                                            >
+                                                <span>50</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="left: 40%"
+                                            >
+                                                <span>100</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="left: 60%"
+                                            >
+                                                <span>150</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="left: 80%"
+                                            >
+                                                <span>200</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ruler Y -->
+                                        <div class="ruler ruler-y" id="ruler-y">
+                                            <div
+                                                class="ruler-marker"
+                                                style="top: 0%"
+                                            >
+                                                <span>0</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="top: 25%"
+                                            >
+                                                <span>50</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="top: 50%"
+                                            >
+                                                <span>100</span>
+                                            </div>
+                                            <div
+                                                class="ruler-marker"
+                                                style="top: 75%"
+                                            >
+                                                <span>150</span>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="canvas-viewport w-100 h-100 d-flex align-items-center justify-content-center"
+                                        >
+                                            <!-- Simulated Paper Sheet -->
+                                            <div
+                                                class="sim-paper"
+                                                id="sim-paper"
+                                            >
+                                                <!-- Bleed guideline (outer cyan/magenta dashed) -->
+                                                <div
+                                                    class="sim-guide bleed-guide"
+                                                    id="guide-bleed"
+                                                >
+                                                    <span
+                                                        class="guide-tag bleed-tag"
+                                                        >Bleed (3mm)</span
+                                                    >
+                                                </div>
+                                                <!-- Safe margin guideline (inner magenta dashed) -->
+                                                <div
+                                                    class="sim-guide safe-guide"
+                                                    id="guide-safe"
+                                                >
+                                                    <span
+                                                        class="guide-tag safe-tag"
+                                                        >Safe Zone</span
+                                                    >
+                                                </div>
+                                                <!-- Millimeter Grid Overlay -->
+                                                <div
+                                                    class="sim-grid-lines"
+                                                    id="grid-lines"
+                                                ></div>
+
+                                                <!-- Draggable Box Element -->
+                                                <div
+                                                    class="sim-element"
+                                                    id="drag-element"
+                                                >
+                                                    <div class="drag-handle">
+                                                        <i
+                                                            class="fa-solid fa-arrows-up-down-left-right"
+                                                        ></i>
+                                                    </div>
+                                                    <div
+                                                        class="element-content"
+                                                    >
+                                                        <div
+                                                            class="element-title"
+                                                        >
+                                                            Invoice Header
+                                                        </div>
+                                                        <div
+                                                            class="element-text"
+                                                        >
+                                                            Sender:
+                                                            {{companyName}}
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="element-metrics"
+                                                    >
+                                                        <span id="metric-w"
+                                                            >120</span
+                                                        >
+                                                        ×
+                                                        <span id="metric-h"
+                                                            >45</span
+                                                        >
+                                                        mm
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Diagnostic and warning console -->
+                                    <div
+                                        class="playground-console p-4 d-flex flex-column gap-3"
+                                    >
+                                        <div class="row console-row g-3">
+                                            <div
+                                                class="col-sm-6 console-col d-flex flex-column"
+                                            >
+                                                <span
+                                                    class="console-label small fw-bold text-uppercase"
+                                                    >Element Anchor
+                                                    (Top-Left)</span
+                                                >
+                                                <div
+                                                    class="console-value fw-bold monospace mt-1"
+                                                    id="coords-display"
+                                                >
+                                                    X: 15.00mm | Y: 15.00mm
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-sm-6 console-col d-flex flex-column"
+                                            >
+                                                <span
+                                                    class="console-label small fw-bold text-uppercase"
+                                                    >Composition Status</span
+                                                >
+                                                <div
+                                                    class="status-indicator safe mt-1 px-3 py-1 rounded-pill"
+                                                    id="status-badge"
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-circle-check"
+                                                    ></i>
+                                                    <span id="status-text"
+                                                        >SAFE FOR PRINT</span
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Live interactive control switches -->
+                                        <div
+                                            class="console-toggles d-flex gap-4 border-top pt-3"
+                                        >
+                                            <label
+                                                class="toggle-control d-flex align-items-center gap-2"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id="toggle-grid"
+                                                    checked
+                                                />
+                                                <span
+                                                    class="toggle-slider"
+                                                ></span>
+                                                <span class="toggle-label small"
+                                                    >Millimeter Grid</span
+                                                >
+                                            </label>
+                                            <label
+                                                class="toggle-control d-flex align-items-center gap-2"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id="toggle-guides"
+                                                    checked
+                                                />
+                                                <span
+                                                    class="toggle-slider"
+                                                ></span>
+                                                <span class="toggle-label small"
+                                                    >Trim & Bleed Overlays</span
+                                                >
+                                            </label>
+                                        </div>
+
+                                        <!-- Explanatory alert triggered dynamically -->
+                                        <div
+                                            class="console-alert info-mode p-3 rounded d-flex gap-2"
+                                            id="console-alert"
+                                        >
+                                            <i
+                                                class="fa-solid fa-circle-info mt-1"
+                                            ></i>
+                                            <span id="alert-msg"
+                                                >Drag the element around to test
+                                                how PrintFlow detects alignment.
+                                                Drag it close to or beyond the
+                                                dotted borders to trigger the
+                                                trimmer collision alerts.</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Color Gamut Inspector Section -->
+            <section class="cmyk-section py-4" id="cmyk">
+                <div class="container">
+                    <div class="section-box p-5 rounded-3xl">
+                        <div class="row align-items-center gy-5 w-100 m-0">
+                            <div class="col-lg-5 order-lg-1 p-0 ps-lg-4">
+                                <div class="gamut-card p-4 rounded-lg">
+                                    <div
+                                        class="gamut-preview-box rounded p-3 d-flex align-items-end"
+                                        id="gamut-preview"
+                                    >
+                                        <span
+                                            class="gamut-label monospace"
+                                            id="gamut-rgb-val"
+                                            >rgb(11, 188, 214)</span
+                                        >
+                                    </div>
+
+                                    <div
+                                        class="gamut-sliders mt-4 d-flex flex-column gap-3"
+                                    >
+                                        <!-- Cyan Slider -->
+                                        <div class="slider-row">
+                                            <div
+                                                class="slider-info d-flex justify-content-between font-sm mb-1"
+                                            >
+                                                <span class="slider-name"
+                                                    >Cyan</span
+                                                >
+                                                <span
+                                                    class="slider-value monospace"
+                                                    id="val-c"
+                                                    >80%</span
+                                                >
+                                            </div>
+                                            <input
+                                                type="range"
+                                                id="slider-c"
+                                                min="0"
+                                                max="100"
+                                                value="80"
+                                                class="form-range cmyk-slider slider-cyan"
+                                            />
+                                        </div>
+
+                                        <!-- Magenta Slider -->
+                                        <div class="slider-row">
+                                            <div
+                                                class="slider-info d-flex justify-content-between font-sm mb-1"
+                                            >
+                                                <span class="slider-name"
+                                                    >Magenta</span
+                                                >
+                                                <span
+                                                    class="slider-value monospace"
+                                                    id="val-m"
+                                                    >10%</span
+                                                >
+                                            </div>
+                                            <input
+                                                type="range"
+                                                id="slider-m"
+                                                min="0"
+                                                max="100"
+                                                value="10"
+                                                class="form-range cmyk-slider slider-magenta"
+                                            />
+                                        </div>
+
+                                        <!-- Yellow Slider -->
+                                        <div class="slider-row">
+                                            <div
+                                                class="slider-info d-flex justify-content-between font-sm mb-1"
+                                            >
+                                                <span class="slider-name"
+                                                    >Yellow</span
+                                                >
+                                                <span
+                                                    class="slider-value monospace"
+                                                    id="val-y"
+                                                    >5%</span
+                                                >
+                                            </div>
+                                            <input
+                                                type="range"
+                                                id="slider-y"
+                                                min="0"
+                                                max="100"
+                                                value="5"
+                                                class="form-range cmyk-slider slider-yellow"
+                                            />
+                                        </div>
+
+                                        <!-- Key Black Slider -->
+                                        <div class="slider-row">
+                                            <div
+                                                class="slider-info d-flex justify-content-between font-sm mb-1"
+                                            >
+                                                <span class="slider-name"
+                                                    >Key (Black)</span
+                                                >
+                                                <span
+                                                    class="slider-value monospace"
+                                                    id="val-k"
+                                                    >15%</span
+                                                >
+                                            </div>
+                                            <input
+                                                type="range"
+                                                id="slider-k"
+                                                min="0"
+                                                max="100"
+                                                value="15"
+                                                class="form-range cmyk-slider slider-key"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-7 p-0 pe-lg-4">
+                                <div class="cmyk-content text-start">
+                                    <span
+                                        class="section-eyebrow text-uppercase fw-bold monospace"
+                                        >CMYK Gamut Simulator</span
+                                    >
+                                    <h2
+                                        class="section-title fw-bold font-serif mt-2 mb-3"
+                                    >
+                                        Simulate physical pigment mixtures
+                                        before press.
+                                    </h2>
+                                    <p class="section-description mb-3">
+                                        Standard computer monitors emit light
+                                        (RGB), while paper printing absorbs
+                                        light reflected by physical inks (CMYK).
+                                        Colors that look hyper-saturated on
+                                        screen often dull out when printed.
+                                    </p>
+                                    <p class="section-description mb-4">
+                                        Use the sliders to mix print inks. The
+                                        preview box simulates the shifting,
+                                        matte gamut of coated paper, warning you
+                                        when your digital selections represent
+                                        colors that ink rollers simply cannot
+                                        achieve.
+                                    </p>
+
+                                    <div
+                                        class="gamut-indicator-bar out-of-gamut d-flex p-3 rounded"
+                                        id="gamut-warning-box"
+                                    >
+                                        <div
+                                            class="warning-icon text-warning me-3"
+                                        >
+                                            <i
+                                                class="fa-solid fa-triangle-exclamation"
+                                            ></i>
+                                        </div>
+                                        <div class="warning-details">
+                                            <h4
+                                                class="warning-title fw-semibold mb-1"
+                                            >
+                                                Print Gamut Warning
+                                            </h4>
+                                            <p
+                                                class="warning-desc small mb-0"
+                                                id="gamut-warning-text"
+                                            >
+                                                This cyan-heavy mix is
+                                                print-safe and converts
+                                                accurately on standard ISO
+                                                Coated presses.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Capabilities Grid -->
+            <section class="features-section py-4" id="features">
+                <div class="container">
+                    <div class="section-box p-5 rounded-3xl">
+                        <div
+                            class="section-header text-center mb-5 max-width-md mx-auto"
+                        >
+                            <span
+                                class="section-eyebrow text-uppercase fw-bold monospace"
+                                >Engine Specs</span
+                            >
+                            <h2 class="section-title fw-bold mt-2">
+                                Built for designers who print, not just render.
+                            </h2>
+                            <p class="section-description mt-3">
+                                Most editors lay out designs in raw web pixels.
+                                PrintFlow anchors everything in physical units,
+                                running background tests to keep your files
+                                production-safe.
+                            </p>
+                        </div>
+
+                        <div
+                            class="row g-4 features-grid justify-content-center"
+                        >
+                            <div class="col-md-6 col-lg-4">
+                                <div class="feature-card h-100 p-4 rounded-lg">
+                                    <div class="feature-icon mb-4">
+                                        <i class="fa-solid fa-compress"></i>
+                                    </div>
+                                    <h3 class="feature-title fs-5 fw-bold mb-2">
+                                        Bleed & Safe Zone Guides
+                                    </h3>
+                                    <p class="feature-text small mb-0">
+                                        Visual guides protect your critical text
+                                        from getting sliced off during
+                                        high-volume mechanical guillotine trims.
+                                        Enforces standard 3mm offsets.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="feature-card h-100 p-4 rounded-lg">
+                                    <div class="feature-icon mb-4">
+                                        <i class="fa-solid fa-maximize"></i>
+                                    </div>
+                                    <h3 class="feature-title fs-5 fw-bold mb-2">
+                                        Grid Snapping in Millimeters
+                                    </h3>
+                                    <p class="feature-text small mb-0">
+                                        Forget pixel approximations. Move text,
+                                        tables, and images on a physical grid
+                                        with snap tolerance. Perfect for
+                                        envelope windows.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="feature-card h-100 p-4 rounded-lg">
+                                    <div class="feature-icon mb-4">
+                                        <i class="fa-solid fa-palette"></i>
+                                    </div>
+                                    <h3 class="feature-title fs-5 fw-bold mb-2">
+                                        CMYK Gamut Compliance
+                                    </h3>
+                                    <p class="feature-text small mb-0">
+                                        Inspect your colors against dry toner
+                                        and offset limits. Get instantly flagged
+                                        when standard web RGBs drift into dull,
+                                        muddy print out-of-gamut outputs.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="feature-card h-100 p-4 rounded-lg">
+                                    <div class="feature-icon mb-4">
+                                        <i
+                                            class="fa-solid fa-magnifying-glass-chart"
+                                        ></i>
+                                    </div>
+                                    <h3 class="feature-title fs-5 fw-bold mb-2">
+                                        DPI & Resolution Audit
+                                    </h3>
+                                    <p class="feature-text small mb-0">
+                                        Every embedded logo or barcode is
+                                        inspected for print density. Get
+                                        warnings for resolution values under 300
+                                        DPI to avoid fuzzy, pixelated assets.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="feature-card h-100 p-4 rounded-lg">
+                                    <div class="feature-icon mb-4">
+                                        <i class="fa-solid fa-database"></i>
+                                    </div>
+                                    <h3 class="feature-title fs-5 fw-bold mb-2">
+                                        Local IndexedDB Storage
+                                    </h3>
+                                    <p class="feature-text small mb-0">
+                                        All templates, custom branding presets,
+                                        and action history remain completely on
+                                        your machine. Zero server uploads needed
+                                        to safeguard private letters.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="feature-card h-100 p-4 rounded-lg">
+                                    <div class="feature-icon mb-4">
+                                        <i class="fa-solid fa-file-export"></i>
+                                    </div>
+                                    <h3 class="feature-title fs-5 fw-bold mb-2">
+                                        Multi-Format Exports
+                                    </h3>
+                                    <p class="feature-text small mb-0">
+                                        Download raw layout JSONs to backup
+                                        templates, or export pixel-perfect SVG
+                                        vectors and PDF layouts mapped directly
+                                        to real paper scale.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Specification Section -->
+            <section class="specs-section py-4" id="specs">
+                <div class="container">
+                    <div class="section-box specs-box p-5 rounded-3xl">
+                        <div class="specs-header mb-4">
+                            <span
+                                class="section-eyebrow text-uppercase fw-bold monospace"
+                                >Technical Blueprint</span
+                            >
+                            <h2 class="section-title fw-bold mt-2">
+                                Engineered to industry sheet standards
+                            </h2>
+                        </div>
+
+                        <div class="row g-5 specs-tables-container w-100 m-0">
+                            <div class="col-lg-6 spec-table-block p-0 pe-lg-3">
+                                <h3 class="spec-group-title fs-6 fw-bold mb-3">
+                                    <i
+                                        class="fa-solid fa-scroll me-2 text-primary"
+                                    ></i>
+                                    ISO Page Presets
+                                </h3>
+                                <div class="table-responsive">
+                                    <table
+                                        class="table align-middle spec-table"
+                                    >
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <th
+                                                    scope="col"
+                                                    class="text-muted"
+                                                >
+                                                    Preset
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="text-muted"
+                                                >
+                                                    Physical Size
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="text-muted"
+                                                >
+                                                    Best Use Case
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="border-bottom">
+                                                <td>
+                                                    <strong
+                                                        class="preset-name-strong"
+                                                        >A4 Standard</strong
+                                                    >
+                                                </td>
+                                                <td
+                                                    class="monospace table-size-text"
+                                                >
+                                                    210 × 297 mm
+                                                </td>
+                                                <td class="table-desc-text">
+                                                    Corporate invoices, formal
+                                                    letters, agreements
+                                                </td>
+                                            </tr>
+                                            <tr class="border-bottom">
+                                                <td>
+                                                    <strong
+                                                        class="preset-name-strong"
+                                                        >A5 Sheet</strong
+                                                    >
+                                                </td>
+                                                <td
+                                                    class="monospace table-size-text"
+                                                >
+                                                    148 × 210 mm
+                                                </td>
+                                                <td class="table-desc-text">
+                                                    Package inserts, leaflets,
+                                                    mini-brochures
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <strong
+                                                        class="preset-name-strong"
+                                                        >C4 Envelope</strong
+                                                    >
+                                                </td>
+                                                <td
+                                                    class="monospace table-size-text"
+                                                >
+                                                    229 × 324 mm
+                                                </td>
+                                                <td class="table-desc-text">
+                                                    Holds flat A4 sheets without
+                                                    folding
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 spec-table-block p-0 ps-lg-3">
+                                <h3 class="spec-group-title fs-6 fw-bold mb-3">
+                                    <i
+                                        class="fa-solid fa-envelope me-2 text-primary"
+                                    ></i>
+                                    Commercial Envelopes
+                                </h3>
+                                <div class="table-responsive">
+                                    <table
+                                        class="table align-middle spec-table"
+                                    >
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <th
+                                                    scope="col"
+                                                    class="text-muted"
+                                                >
+                                                    Preset
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="text-muted"
+                                                >
+                                                    Physical Size
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="text-muted"
+                                                >
+                                                    Best Use Case
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="border-bottom">
+                                                <td>
+                                                    <strong
+                                                        class="preset-name-strong"
+                                                        >C5 Envelope</strong
+                                                    >
+                                                </td>
+                                                <td
+                                                    class="monospace table-size-text"
+                                                >
+                                                    162 × 229 mm
+                                                </td>
+                                                <td class="table-desc-text">
+                                                    Holds A4 folded once, or
+                                                    flat A5 sheets
+                                                </td>
+                                            </tr>
+                                            <tr class="border-bottom">
+                                                <td>
+                                                    <strong
+                                                        class="preset-name-strong"
+                                                        >DL Envelope</strong
+                                                    >
+                                                </td>
+                                                <td
+                                                    class="monospace table-size-text"
+                                                >
+                                                    110 × 220 mm
+                                                </td>
+                                                <td class="table-desc-text">
+                                                    Holds A4 sheets folded into
+                                                    three equal parts
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <strong
+                                                        class="preset-name-strong"
+                                                        >No. 10 Comm.</strong
+                                                    >
+                                                </td>
+                                                <td
+                                                    class="monospace table-size-text"
+                                                >
+                                                    104.7 × 241.3 mm
+                                                </td>
+                                                <td class="table-desc-text">
+                                                    Standard US Business mailing
+                                                    correspondence
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pricing Plans Section -->
+            <section class="pricing-section py-4" id="pricing">
+                <div class="container">
+                    <div class="section-box p-5 rounded-3xl">
+                        <div
+                            class="section-header text-center mb-5 max-width-md mx-auto"
+                        >
+                            <span
+                                class="section-eyebrow text-uppercase fw-bold monospace"
+                                >Pricing Plans</span
+                            >
+                            <h2 class="section-title fw-bold mt-2">
+                                Choose your scale of press safety
+                            </h2>
+                            <p class="section-description mt-3">
+                                Start designing templates for free inside your
+                                local browser cache, or upgrade for advanced
+                                preflight checks, vector exports, and team brand
+                                libraries.
+                            </p>
+                        </div>
+
+                        <div
+                            class="row g-4 justify-content-center pricing-grid align-items-stretch"
+                        >
+                            <!-- Free Tier -->
+                            <div class="col-md-6 col-lg-4">
+                                <div
+                                    class="pricing-card p-4 d-flex flex-column justify-content-between h-100"
+                                >
+                                    <div class="pricing-header mb-4">
+                                        <h3 class="tier-name fs-5 fw-bold mb-2">
+                                            Starter
+                                        </h3>
+                                        <p
+                                            class="tier-desc text-muted small mb-3"
+                                        >
+                                            For quick drafts and local
+                                            pre-visuals
+                                        </p>
+                                        <div class="tier-price monospace">
+                                            <span class="currency fs-5 fw-bold"
+                                                >$</span
+                                            >
+                                            <span
+                                                class="price fs-2 fw-extrabold"
+                                                >0</span
+                                            >
+                                            <span
+                                                class="period text-muted small"
+                                                >/mo</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <ul
+                                        class="tier-features list-unstyled small mb-5 d-flex flex-column gap-3"
+                                    >
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Local-first simulator
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Standard paper presets
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Millimeter grids & snapping
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            100% private browser storage
+                                        </li>
+                                        <li class="disabled text-muted">
+                                            <i
+                                                class="fa-solid fa-circle-xmark me-2"
+                                            ></i>
+                                            Custom sheet sizes
+                                        </li>
+                                        <li class="disabled text-muted">
+                                            <i
+                                                class="fa-solid fa-circle-xmark me-2"
+                                            ></i>
+                                            SVG & PDF layout exports
+                                        </li>
+                                    </ul>
+                                    <a
+                                        href="../version_7/index.html"
+                                        class="btn btn-secondary w-100 py-2"
+                                        >Start Drafting</a
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Pro Tier (Highlighted) -->
+                            <div class="col-md-6 col-lg-4">
+                                <div
+                                    class="pricing-card pricing-card-pro p-4 d-flex flex-column justify-content-between h-100 position-relative"
+                                >
+                                    <span class="badge-tag-popular"
+                                        >Most Popular</span
+                                    >
+                                    <div class="pricing-header mb-4">
+                                        <h3 class="tier-name fs-5 fw-bold mb-2">
+                                            Pro Plan
+                                        </h3>
+                                        <p
+                                            class="tier-desc text-muted small mb-3"
+                                        >
+                                            For freelance designers and print
+                                            shops
+                                        </p>
+                                        <div class="tier-price monospace">
+                                            <span class="currency fs-5 fw-bold"
+                                                >$</span
+                                            >
+                                            <span
+                                                class="price fs-2 fw-extrabold"
+                                                >19</span
+                                            >
+                                            <span
+                                                class="period text-muted small"
+                                                >/mo</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <ul
+                                        class="tier-features list-unstyled small mb-5 d-flex flex-column gap-3"
+                                    >
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-cyan me-2"
+                                            ></i>
+                                            Everything in Starter
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-cyan me-2"
+                                            ></i>
+                                            Unlimited custom canvas sizes
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-cyan me-2"
+                                            ></i>
+                                            Vector SVG & PDF exports
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-cyan me-2"
+                                            ></i>
+                                            Active CMYK Gamut checker
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-cyan me-2"
+                                            ></i>
+                                            DPI & asset density auditing
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-cyan me-2"
+                                            ></i>
+                                            Premium typography libraries
+                                        </li>
+                                    </ul>
+                                    <a
+                                        href="../version_7/index.html"
+                                        class="btn btn-primary w-100 py-2"
+                                        >Go Professional</a
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Business Tier -->
+                            <div class="col-md-6 col-lg-4">
+                                <div
+                                    class="pricing-card p-4 d-flex flex-column justify-content-between h-100"
+                                >
+                                    <div class="pricing-header mb-4">
+                                        <h3 class="tier-name fs-5 fw-bold mb-2">
+                                            Enterprise
+                                        </h3>
+                                        <p
+                                            class="tier-desc text-muted small mb-3"
+                                        >
+                                            For agencies and publishing houses
+                                        </p>
+                                        <div class="tier-price monospace">
+                                            <span class="currency fs-5 fw-bold"
+                                                >$</span
+                                            >
+                                            <span
+                                                class="price fs-2 fw-extrabold"
+                                                >49</span
+                                            >
+                                            <span
+                                                class="period text-muted small"
+                                                >/mo</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <ul
+                                        class="tier-features list-unstyled small mb-5 d-flex flex-column gap-3"
+                                    >
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Everything in Pro
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Shared brand assets & logos
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Collaborative sheet workspace
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Custom preflight RIP profiles
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            Priority support & ticketing
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="fa-solid fa-circle-check text-primary me-2"
+                                            ></i>
+                                            SLA delivery guarantee
+                                        </li>
+                                    </ul>
+                                    <a
+                                        href="../version_7/index.html"
+                                        class="btn btn-secondary w-100 py-2"
+                                        >Contact Sales</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Semantic FAQ Accordion via Bootstrap 5 -->
+            <section class="faq-section py-4" id="faq">
+                <div class="container">
+                    <div class="section-box p-5 rounded-3xl">
+                        <div
+                            class="section-header text-center mb-5 max-width-md mx-auto"
+                        >
+                            <span
+                                class="section-eyebrow text-uppercase fw-bold monospace"
+                                >Got Questions?</span
+                            >
+                            <h2 class="section-title fw-bold mt-2">
+                                Answering print design mechanics
+                            </h2>
+                        </div>
+
+                        <div
+                            class="accordion accordion-flush faq-accordion-wrapper w-100"
+                            id="faqAccordion"
+                        >
+                            <!-- FAQ 1 -->
+                            <div
+                                class="accordion-item faq-item mb-3 rounded border"
+                            >
+                                <h3 class="accordion-header" id="headingOne">
+                                    <button
+                                        class="accordion-button collapsed faq-trigger bg-transparent py-4 px-4 fw-semibold"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne"
+                                        aria-expanded="false"
+                                        aria-controls="collapseOne"
+                                    >
+                                        How does PrintFlow convert screen pixels
+                                        to physical millimeters?
+                                    </button>
+                                </h3>
+                                <div
+                                    id="collapseOne"
+                                    class="accordion-collapse collapse"
+                                    aria-labelledby="headingOne"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div
+                                        class="accordion-body faq-content-text px-4 pb-4 pt-0"
+                                    >
+                                        PrintFlow sets a fixed scaling ratio on
+                                        the SVG canvas wrapper. For instance, at
+                                        100% zoom, 1 millimeter equals exactly
+                                        3.78 pixels (derived from the 96 DPI
+                                        screen standard). Changing the page size
+                                        recalculates these container bounds
+                                        dynamically, while exports re-project
+                                        coordinates into real physical SVG
+                                        viewBox dimensions.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- FAQ 2 -->
+                            <div
+                                class="accordion-item faq-item mb-3 rounded border"
+                            >
+                                <h3 class="accordion-header" id="headingTwo">
+                                    <button
+                                        class="accordion-button collapsed faq-trigger bg-transparent py-4 px-4 fw-semibold"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo"
+                                        aria-expanded="false"
+                                        aria-controls="collapseTwo"
+                                    >
+                                        Does my data get uploaded to a remote
+                                        database?
+                                    </button>
+                                </h3>
+                                <div
+                                    id="collapseTwo"
+                                    class="accordion-collapse collapse"
+                                    aria-labelledby="headingTwo"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div
+                                        class="accordion-body faq-content-text px-4 pb-4 pt-0"
+                                    >
+                                        No. PrintFlow is designed to be
+                                        local-first. We use IndexedDB directly
+                                        inside your browser cache to persist
+                                        custom templates, company details,
+                                        history logs, and passwords (which are
+                                        securely hashed via the WebCrypto API
+                                        before writing). Your document layouts
+                                        never leave your system unless you
+                                        manually download them.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- FAQ 3 -->
+                            <div
+                                class="accordion-item faq-item mb-3 rounded border"
+                            >
+                                <h3 class="accordion-header" id="headingThree">
+                                    <button
+                                        class="accordion-button collapsed faq-trigger bg-transparent py-4 px-4 fw-semibold"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseThree"
+                                        aria-expanded="false"
+                                        aria-controls="collapseThree"
+                                    >
+                                        What are bleed and safe margins, and why
+                                        do I need them?
+                                    </button>
+                                </h3>
+                                <div
+                                    id="collapseThree"
+                                    class="accordion-collapse collapse"
+                                    aria-labelledby="headingThree"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div
+                                        class="accordion-body faq-content-text px-4 pb-4 pt-0"
+                                    >
+                                        During print finishing, massive blades
+                                        slice stacks of sheets down to trim
+                                        size. If the blades deviate slightly,
+                                        any background color that doesn't extend
+                                        beyond the crop line leaves white
+                                        margins. The "bleed line" extends
+                                        elements 3mm outward to avoid this.
+                                        Conversely, any layout element placed
+                                        too close to the edge risks getting
+                                        sliced off—the "safe margin" keeps your
+                                        text 3–5mm inside the crop line.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- FAQ 4 -->
+                            <div
+                                class="accordion-item faq-item mb-3 rounded border"
+                            >
+                                <h3 class="accordion-header" id="headingFour">
+                                    <button
+                                        class="accordion-button collapsed faq-trigger bg-transparent py-4 px-4 fw-semibold"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseFour"
+                                        aria-expanded="false"
+                                        aria-controls="collapseFour"
+                                    >
+                                        Can I load my custom vector SVG
+                                        graphics?
+                                    </button>
+                                </h3>
+                                <div
+                                    id="collapseFour"
+                                    class="accordion-collapse collapse"
+                                    aria-labelledby="headingFour"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div
+                                        class="accordion-body faq-content-text px-4 pb-4 pt-0"
+                                    >
+                                        Yes. The full editor supports SVG file
+                                        imports. It parses the SVG child
+                                        structures (lines, paths, rects, text)
+                                        and scales them straight onto your
+                                        canvas. When you are done drafting, you
+                                        can export the workspace back into
+                                        clean, unstyled vector files ready for
+                                        Adobe Illustrator or commercial RIP
+                                        processors.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final Call to Action -->
+            <section class="cta-section py-4 text-center" id="cta">
+                <div class="container">
+                    <div
+                        class="section-box p-5 rounded-3xl justify-content-center align-items-center"
+                    >
+                        <h2 class="cta-title fw-bold font-serif mb-3">
+                            Ready to compose print-safe layouts?
+                        </h2>
+                        <p class="cta-desc mx-auto mb-4">
+                            Launch the PrintFlow editor now. No signups, no
+                            credit cards, 100% private in your browser.
+                        </p>
+                        <div
+                            class="d-flex flex-wrap justify-content-center gap-3 cta-actions"
+                        >
+                            <a
+                                href="../version_7/index.html"
+                                class="btn btn-primary btn-lg px-4"
+                                id="btn-cta-launch"
+                                >Open Workspace Editor
+                                <i
+                                    class="fa-solid fa-wand-magic-sparkles ms-1"
+                                ></i
+                            ></a>
+                            <a
+                                href="https://github.com"
+                                target="_blank"
+                                rel="noopener"
+                                class="btn btn-secondary btn-lg px-4"
+                                id="btn-cta-github"
+                                ><i class="fa-brands fa-github me-1"></i> View
+                                Repository</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Page Footer -->
+        <footer class="site-footer pt-5 pb-3">
+            <div class="container py-4">
+                <div class="row g-4 footer-container">
+                    <div class="col-lg-6 footer-brand d-flex flex-column gap-3">
+                        <div class="footer-logo fw-bold fs-5">
+                            <i
+                                class="fa-solid fa-layer-group text-primary me-2"
+                            ></i>
+                            PrintFlow
+                        </div>
+                        <p class="footer-about small mb-0">
+                            Providing browser-based layout accuracy. We combine
+                            standard web SVG templates with professional press
+                            guidelines.
+                        </p>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3 footer-links-group">
+                        <h4
+                            class="footer-links-title small text-uppercase fw-bold monospace mb-3"
+                        >
+                            Features
+                        </h4>
+                        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                            <li>
+                                <a
+                                    href="#playground"
+                                    class="small text-decoration-none"
+                                    >Layout Simulator</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#cmyk"
+                                    class="small text-decoration-none"
+                                    >CMYK Inspector</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#specs"
+                                    class="small text-decoration-none"
+                                    >Envelope Standards</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3 footer-links-group">
+                        <h4
+                            class="footer-links-title small text-uppercase fw-bold monospace mb-3"
+                        >
+                            Editor
+                        </h4>
+                        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                            <li>
+                                <a
+                                    href="../version_7/index.html"
+                                    class="small text-decoration-none"
+                                    >Workspace Login</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="../version_7/index.html"
+                                    class="small text-decoration-none"
+                                    >Register User</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="https://caniuse.com"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="small text-decoration-none"
+                                    >Browser Support</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div
+                    class="footer-bottom d-flex justify-content-between align-items-center border-top pt-4 mt-5"
+                >
+                    <p class="copyright-text small mb-0">
+                        &copy; 2026 PrintFlow Systems. All rights reserved.
+                        Locally executed for print safety.
+                    </p>
+                    <div
+                        class="system-status small monospace d-flex align-items-center gap-2"
+                    >
+                        <span class="status-indicator-dot"></span> Sandbox
+                        Engine V7.0 Active
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap 5 JS Bundle -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"
+        ></script>
+
+        <!-- App JavaScript Logic -->
+        <script src="app.js"></script>
+    </body>
+</html>
