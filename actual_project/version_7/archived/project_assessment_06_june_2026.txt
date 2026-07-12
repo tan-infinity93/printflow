@@ -1,0 +1,380 @@
+================================================================================
+  PRINTING APP — PROJECT ASSESSMENT
+  Date   : 06 June 2026
+  Version: 7  (v 1.2.0)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+
+A browser-based document design and printing tool built entirely in vanilla
+HTML / CSS / JavaScript (no frontend framework). Users log in, design multi-page
+documents on an SVG canvas, apply templates, and export to PDF or raw JSON/SVG.
+All persistence is handled via IndexedDB (templates, audit logs, version history)
+and sessionStorage (UI state, settings, zoom, grid).
+
+Primary use-cases
+  - Designing letters, invoices, and envelope layouts
+  - Placing text boxes, image boxes, and tables on an SVG canvas
+  - Saving, versioning, and exporting documents
+
+
+--------------------------------------------------------------------------------
+2. FILE / MODULE STRUCTURE
+--------------------------------------------------------------------------------
+
+File              Lines   Responsibility
+---------------------------------------------------------------------------
+index.html         373    Login / sign-up page. Loads scripts.js for DB helpers.
+workspace.html    2789    Main app shell — all panels, modals, SVG canvas.
+index.css          625    Login page styles.
+style.css         1981    Workspace styles (light + dark mode, all components).
+scripts.js        2469    Core state, canvas logic, zoom, drag, context menu,
+                          undo/redo, export PDF, toast, confirm modal, init.
+layout.js          479    SVG canvas layout, multi-page management, rulers,
+                          grid, safe zone, add/remove pages.
+letters.js        1498    Document-type presets (Letter, Invoice, Envelope),
+                          custom template creation/gallery, delivery mode.
+exports.js         239    Raw file export (JSON/SVG), app settings save/load/reset.
+imports.js         318    Raw file import (JSON/SVG), DOM ↔ JSON serialisation.
+darkmode.js         26    Dark mode toggle and session-state restore on load.
+stats.js           124    Storage usage, audit history, version history panels;
+                          event-driven DB refresh via 'printflow:dbwrite'.
+help.js            432    Help modal content (index, left/right menus, workflow),
+                          PDF download for Help Manual and Audit Log.
+
+Legacy / inactive
+  index_old.html, index_old_v1.html, workspace1.html — old iterations, not served.
+  style1.css — old stylesheet, not linked.
+
+
+--------------------------------------------------------------------------------
+3. DATABASE SCHEMA  (IndexedDB — "PrintingDB" v1)
+--------------------------------------------------------------------------------
+
+Store               Key       Description
+---------------------------------------------------------------------------
+printingUsers       id        User accounts (userName, passWord hash).
+printingTemplates   id        Custom and gallery templates (dom-json snapshot).
+printingAuditLogs   id        Timestamped action ledger.
+printingVersionLogs id        Full multi-page canvas snapshots for version restore.
+
+All stores share a helper layer in scripts.js:
+  saveRecordToDB / getAllRecordsFromDB / getSingleRecordFromDB /
+  deleteSingleRecordFromDB / checkLoginUser
+
+The DB is opened once via a cached _dbPromise and reused across all operations.
+A custom event 'printflow:dbwrite' fires on every write, driving stats.js refresh
+without polling.
+
+
+--------------------------------------------------------------------------------
+4. CANVAS ARCHITECTURE
+--------------------------------------------------------------------------------
+
+The workspace is a single SVG element (#workspace) that spans all pages:
+
+  SVG root
+    ├── <g id="rulers-layer">          — horizontal + vertical mm rulers
+    └── (per page, p = 1…N)
+        └── <g id="pageGroup-p">
+            ├── <rect id="pageRect-p">     — white paper background
+            ├── <g id="grid-layer-p">      — grid overlay (url(#gridPattern))
+            ├── <rect id="safeZone-p">     — dashed safe-zone border
+            ├── <g id="content-layer-p">  — user elements (text/image/table groups)
+            └── <text class="page-watermark"> — small "P1" badge top-right
+
+Element types on the canvas:
+  - svg-text-group   : <g> wrapping <text> + highlight <rect>
+  - svg-image-group  : <g> wrapping <image> + corner resize handles
+  - svg-table-group  : <g> of cell <g>s (each with <rect> + <text>) + grip handle
+
+All elements support:
+  - Free drag (SVG translate transform, snap-to-grid optional)
+  - Context menu (right-click / long-press): edit, style, layer order, alignment
+  - Undo / redo (JSON snapshot stack, max 20 deep, all pages)
+  - Lock / unlock
+  - Overlap detection warning
+
+Multi-page:
+  - Up to 5 pages, each a vertically stacked page group in the SVG
+  - Page gap: 15 mm between pages (PAGE_GAP_MM in layout.js)
+  - Active page tracked in sessionStorage; clicking a page activates it
+  - addPage / removePage manage the SVG and update the Pages panel UI
+
+Canvas div sizing is now dynamic: updateCanvasSize() in layout.js sets the
+#canvas div's width/height to match the SVG on every resize, preventing the
+grey background shadow from overflowing the page area.
+
+
+--------------------------------------------------------------------------------
+5. FEATURE INVENTORY
+--------------------------------------------------------------------------------
+
+AUTHENTICATION
+  ✓ User login with SHA-256 hashed password (SubtleCrypto)
+  ✓ Create new user
+  ✓ Logged-in username displayed in navbar pill
+  ✓ Logout with session clear
+
+PAGE SETUP
+  ✓ Page sizes: A4, A5, C4, DL_E, C5_E, Num10_E
+  ✓ Live dimension display (mm)
+  ✓ Pointer coordinates in mm (real-time mousemove)
+
+DOCUMENT PRESET
+  ✓ Document types: None, Letter, Invoice, Envelope
+  ✓ Auto page-size switching: Letter/Invoice → A4, Envelope → DL_E (if not already
+    an envelope size)
+  ✓ Load from gallery (custom templates stored in IndexedDB)
+  ✓ Create own template (text, image, table element definitions)
+  ✓ Image data stored as base64 data URLs (survives IndexedDB round-trips)
+  ✓ Save current canvas as version snapshot
+
+DOCUMENT ELEMENTS
+  ✓ Add TextBox (with font size, bold, italic, word wrap)
+  ✓ Add ImageBox (with drag, rotate, flip, aspect-locked resize)
+  ✓ Add Table (rows × cols, cell editing, resize via context menu,
+               drag grip handle at top of table)
+  ✓ Lock/unlock all elements
+  ✓ Reset canvas (all pages)
+
+PAGES PANEL
+  ✓ Add / remove pages (up to 5)
+  ✓ Active page badge (P / total)
+  ✓ Element counts across all pages (Text Boxes / Image Boxes / Tables)
+    displayed as labelled rows with blue pill badges
+  ✓ "Click a page on canvas to make it active" hint
+
+ZOOM CONTROLS
+  ✓ Zoom in / out / reset (0.5× – 2×, step 0.1)
+  ✓ Preview mode (hides grid, safe zone, handles; 0.5× zoom)
+
+GRID CONTROLS
+  ✓ Show / hide grid
+  ✓ Grid size: 5 / 10 / 20 mm
+  ✓ Snap-to-grid (rounds drag position to nearest grid step)
+
+SAFE ZONE CONTROLS
+  ✓ Show / hide safe zone overlay
+  ✓ Configurable margin size (5–15 mm)
+
+PRINTING & EXPORT
+  ✓ PDF export (html2canvas + jsPDF, multi-page, hides UI chrome)
+  ✓ Preview before print
+  ✓ Raw export: JSON (multi-page dom-json format) or SVG
+  ✓ Raw import: JSON (multi-page and legacy single-page) or SVG
+
+UNDO / REDO
+  ✓ Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z keyboard shortcuts
+  ✓ Max 20 undo steps
+  ✓ Count badges next to buttons (live-updating)
+  ✓ Stacks cleared on canvas reset
+
+CONTEXT MENU (right-click / contextmenu event)
+  Text box  : edit text, font size, bold/italic, layer order, alignment, remove
+  Image box : rotate, flip, dimensions (aspect-lock), layer order, alignment, remove
+  Table     : edit cell, rows, columns, layer order, alignment, remove
+  Shared    : Z-order (front/forward/back/back) + 6-direction page alignment
+
+SETTINGS MODAL
+  ✓ Dark mode toggle
+  ✓ Splash screen toggle
+  ✓ Export format (JSON / SVG)
+  ✓ Save / restore / reset app settings (panel visibility persisted)
+  ✓ Left-panel section visibility (8 toggleable cards)
+  ✓ Right-panel section visibility (3 toggleable cards)
+
+RIGHT PANEL
+  ✓ App Space Usage — 25% of IndexedDB quota as app allocation, live free/used/percent
+  ✓ App Downloads — Help Manual PDF and Audit Log PDF (both styled, paginated)
+  ✓ Version History — clickable list to restore saved versions
+  ✓ Audit History — timestamped change ledger
+
+HELP MODAL
+  ✓ Four tabs: Index, Left Side Menu, Right Side Menu, Workflow
+  ✓ All tabs use unified numbered-circle layout (consistent visual rhythm)
+  ✓ Workflow has 9 detailed step-by-step entries
+
+DARK MODE
+  ✓ Full coverage: navbar, cards, tables, badges, modals, forms, sliders,
+    canvas, context menu, help accordions, undo/redo buttons
+  ✓ State persisted in sessionStorage, restored on reload
+
+
+--------------------------------------------------------------------------------
+6. RECENT CHANGES (this session — 06 June 2026)
+--------------------------------------------------------------------------------
+
+BUGS FIXED
+  — saveCustomTemplate stored raw File objects for images → now converts to
+    base64 data URL via FileReader before storing (letters.js).
+  — Modal X (btn-close) missing white class on templateGalleryModal and
+    templateCreateModal → added btn-close-white (workspace.html).
+  — changeTableCellContent referenced wrong input id 'svgTableTextBoxEditinput'
+    → corrected to 'svgTableCellEditInput' (scripts.js).
+  — clearCanvasGrid called bootstrap.Modal.getInstance(...).hide() when the
+    modal was not open → TypeError crashed dropdown event handler. Extracted
+    _doClearCanvas() helper; letters.js "None" preset uses helper directly.
+  — logOut not defined: scripts.js crashed at svgRoot.addEventListener (line 204)
+    when loaded on index.html where #workspace doesn't exist. Added null guard.
+    Also, onloadInit called before exports.js loaded (loadAppSettings undefined).
+    Fixed by deferring to window.addEventListener("load", onloadInit).
+  — setDefaults crashed on null loggedInUser → added null guard, falls back
+    to "?" for initials.
+  — Envelope preset crashed: ENVELOPE_LAYOUT_ELEMENTS has no "A4" key, but
+    default pageSize is "A4". Auto-switch to DL_E when Envelope selected on
+    non-envelope page. Same guard added for Letter (→ A4) and Invoice (→ A4).
+  — content-layer (single-page era id) still used in letters.js → corrected
+    to getActiveContentLayer().
+  — Grid did not reset on canvas reset button: layoutSvgCanvas preserves content;
+    clearCanvasGrid now explicitly wipes all content layers.
+  — Canvas div hardcoded to A4 in CSS; grey shadow didn't resize with page format.
+    Now dynamically synced via updateCanvasSize() called from updateSvgSize().
+  — SVG canvas centred to top-left instead of top-centre. Fixed: display:block
+    + margin:auto + transform-origin:top center.
+
+UI / UX IMPROVEMENTS
+  — Page number watermark: font-size 22 → 5, opacity 0.1 → 0.65, colour #888
+    → #0d6efd. Now a small visible "P1" / "P2" badge at top-right of each page.
+  — Undo/redo count badges added next to each button.
+  — Element counters moved from Document Elements card to Pages card, styled
+    as labelled table rows with blue pill badges.
+  — Grid/Safe Zone Select Size: replaced overflowing input-group with compact
+    .card-number-input (transparent bg, thin border, 40 px wide) inside
+    standard two-column table rows.
+  — Column layout: col-md-2 / 8 / 2 preserved (reverted from 3/6/3 experiment);
+    cell widths corrected to 60/40% split; table margin-top/-bottom set to 0.
+  — All cell background colours set to transparent (no more #f8f9fa patches).
+  — Navbar user section: replaced bare circle with frosted-glass pill showing
+    avatar + username; logout button gets icon.
+  — Card panel buttons: border-radius 20px, padding 4 / 14px, thin-border style.
+  — Card panel badge spans: light-tinted chip style (faint blue fill + border).
+  — Card panel dropdown toggles: transparent + thin-border + text-overflow ellipsis.
+  — Toast success: changed from bg-success (green) to bg-primary (blue).
+  — Help modal: all 4 tabs now use the same numbered-circle layout via shared
+    _renderNumberedList() helper.
+  — Workflow section: expanded from 3 placeholder entries to 9 full steps.
+  — Help/Audit PDF downloads: styled header band, alternating rows, page numbers,
+    footer rule (help.js).
+  — Template gallery cards: date badge, page-type chip, cleaner Load/Delete buttons.
+  — Context menu: blue gradient header, typed title per element, icon-based tools,
+    danger-styled remove buttons, full dark-mode support.
+  — Inter font added to both index.html and workspace.html alongside Ubuntu.
+  — App Space Usage: now shows 25% of actual IndexedDB quota as app allocation.
+  — Table grip handle added: blue pill with 3 dot indicators above each table.
+  — Global negative table margin (margin: -1vh 0) removed.
+
+
+--------------------------------------------------------------------------------
+7. KNOWN ISSUES / LIMITATIONS
+--------------------------------------------------------------------------------
+
+  1. No persistence of canvas between sessions for anonymous / unversioned state.
+     The user must manually click "Save Current Version" to preserve work.
+     Auto-save on a timer or before tab close would reduce data loss risk.
+
+  2. PDF export uses html2canvas which rasterises the SVG at 3× scale. Fine for
+     most use cases, but vector quality (e.g. text sharpness at very high zoom)
+     is limited. A direct SVG-to-PDF pipeline (e.g. svg2pdf.js) would be sharper.
+
+  3. updateTableDimensions (context menu Rows/Columns change) uses a fixed
+     colWidth = 20mm / rowHeight = 10mm rather than reading the existing cell
+     dimensions. Resizing a table resets all custom widths.
+
+  4. makeTableEditable (double-click cell to edit via prompt()) is commented out.
+     Cell editing is only possible via the context menu input field.
+
+  5. There is one duplicate id "app-storage-usage" in workspace.html (lines 1078
+     and 1139). The second card (App Downloads) should have a unique id.
+
+  6. The "Save Export as HTML" toggle in Settings switches the export format but
+     the label says "HTML" whereas the actual alternate format is SVG. The label
+     should read "SVG".
+
+  7. Dark mode state toggle (Settings > Dark Mode) uses a plain <input type=checkbox>
+     whose checked state is not restored from sessionStorage on reload, so the
+     toggle visually appears unchecked even when dark mode is active.
+
+  8. loadSelectedTemplateFile and deleteSelectedTemplateFile are called from inline
+     onclick strings in dynamically generated HTML inside openTemplateGalleryModal.
+     These functions must remain globally scoped; any future module bundling will
+     break them.
+
+  9. The letters.js event listener for .documenttype uses a foreach over
+     querySelectorAll at load time. If the dropdown items are ever rendered
+     dynamically the listeners will not attach.
+
+  10. No mobile / touch support for drag operations on the SVG canvas.
+      Drag uses mousedown/mousemove/mouseup only.
+
+
+--------------------------------------------------------------------------------
+8. TECHNICAL DEBT
+--------------------------------------------------------------------------------
+
+  - Commented-out dead code throughout scripts.js and letters.js (old positioning
+    logic, old File-object image code). Should be cleaned up.
+
+  - scripts.js is a single 2 469-line file. Splitting into logical modules
+    (canvas.js, drag.js, zoom.js, export.js, ui.js) would improve maintainability.
+
+  - All functions are global (window scope). A module pattern or IIFE wrapping
+    would reduce collision risk.
+
+  - index.html and workspace.html share scripts.js. This creates a tension: the
+    script guards against running canvas code on the login page via the
+    svgRoot-existence check, but it's fragile. A proper split (shared-utils.js
+    + workspace-only.js) would be cleaner.
+
+  - The LETTER_LAYOUT_ELEMENTS / INVOICE_LAYOUT_ELEMENTS / ENVELOPE_LAYOUT_ELEMENTS
+    constants contain hardcoded personal name/address data (Tanmoy Karmokar,
+    Chinmay Karmokar etc.) intended as placeholders. These should be
+    template-variable driven (e.g. {{sender_name}}).
+
+  - restoreVersion uses a hardcoded layout call sequence that duplicates the
+    onloadInit logic. A shared restoreState(pages, pageSize) helper would reduce
+    duplication.
+
+
+--------------------------------------------------------------------------------
+9. DEPENDENCY INVENTORY
+--------------------------------------------------------------------------------
+
+CDN (loaded at runtime)
+  Bootstrap 5.3.2 / 5.3.3  — CSS + JS bundle
+  Font Awesome 7.0.1        — icon CSS + JS
+  Inter / Ubuntu / Baskervville (Google Fonts)
+  html2canvas 1.4.1         — canvas rasterisation for PDF export
+  jsPDF 2.5.1               — PDF generation
+
+No build system, no bundler, no NPM dependencies.
+All assets are loaded directly from CDNs.
+
+
+--------------------------------------------------------------------------------
+10. RECOMMENDED NEXT STEPS
+--------------------------------------------------------------------------------
+
+Priority 1 (stability / data integrity)
+  a. Fix duplicate id "app-storage-usage" (point 7.5 above).
+  b. Restore dark-mode checkbox state from sessionStorage on settings modal open.
+  c. Add auto-save draft to sessionStorage on every captureSnapshot() call so
+     work survives accidental tab close.
+
+Priority 2 (UX)
+  d. Touch / pointer event support for drag on mobile.
+  e. Replace prompt()-based table editing (currently commented out) with an
+     inline SVG foreignObject input or a modal-based editor.
+  f. Add real-time character/word count for text boxes in the context menu.
+
+Priority 3 (architecture)
+  g. Split scripts.js into logical submodules.
+  h. Replace hardcoded sample data in LETTER/INVOICE/ENVELOPE_LAYOUT_ELEMENTS
+     with {{template_variable}} placeholders.
+  i. Vector PDF export via svg2pdf.js for sharper text output.
+
+================================================================================
+  END OF ASSESSMENT
+================================================================================

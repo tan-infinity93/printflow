@@ -1,0 +1,240 @@
+================================================================================
+  PRINTING APP — PROJECT ASSESSMENT
+  Date   : 11 June 2026
+  Version: 7  (v 1.2.1)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. SCOPE OF THIS SESSION
+--------------------------------------------------------------------------------
+
+  a. Priority 1 items from the 06 June assessment — verified / completed.
+  b. Fresh full audit of all active files — new bugs found and fixed.
+  c. Priority 2 and Priority 3 pointers consolidated below (section 5 & 6).
+
+
+--------------------------------------------------------------------------------
+2. PRIORITY 1 STATUS (from 06 June assessment)
+--------------------------------------------------------------------------------
+
+  a. Duplicate id "app-storage-usage"
+     ALREADY FIXED in a prior session — second card now has id="app-downloads".
+     Verified: no duplicate remains. (New duplicates were found elsewhere —
+     see section 3.)
+
+  b. Dark-mode checkbox state not restored
+     FIXED. The checkbox now has id="darkModeCheckbox" (workspace.html).
+     darkmode.js gained _syncDarkModeCheckbox(), called on page load and after
+     every toggleDarkMode(). openSettingsModal() (scripts.js) also syncs it via
+     the new id instead of a fragile "first checkbox in modal" querySelector.
+
+  c. Auto-save draft on captureSnapshot
+     ALREADY IMPLEMENTED in a prior session — captureSnapshot() persists a
+     draft to localStorage ("printflow_draft") and _restoreDraft() offers to
+     restore it from onloadInit when the canvas is empty. Verified wired.
+
+  d. "Save Export as HTML" label
+     FIXED. Settings label now reads "Save Export as SVG (default: JSON)".
+
+
+--------------------------------------------------------------------------------
+3. FRESH AUDIT — BUGS FOUND AND FIXED (11 June 2026)
+--------------------------------------------------------------------------------
+
+  CRITICAL
+
+  1. index.html id collision with the SVG canvas (index.html, scripts.js)
+     The login page's splash <main> used id="workspace" — the exact id
+     scripts.js uses to detect the SVG canvas. Consequences on the login page:
+       - onloadInit() ran on window.load and crashed in setDefaults()
+         (title-version does not exist there);
+       - the mousemove mm-tracker attached to the splash and threw a
+         TypeError on every mouse movement (xSize/ySize missing);
+     Fix: renamed to id="splash-shell" (no CSS referenced #workspace in
+     index.css, so safe). Also added a null guard to the settingsModal
+     DOMContentLoaded listener in scripts.js, which crashed on index.html.
+
+  2. toggleSplashScreen() referenced but never defined (workspace.html)
+     The Settings "Show Splash Screen" switch threw a ReferenceError on click.
+     Fix: implemented in exports.js — persists "showSplashScreen" to
+     localStorage (survives logout/sessionStorage.clear). index.html now reads
+     it on load and skips the splash reveal animation when disabled. The
+     checkbox got id="splashScreenCheckbox" and its state is synced when the
+     Settings modal opens.
+
+  3. restoreAppSettings() referenced but never defined (workspace.html)
+     The Settings "Restore App Settings" switch threw a ReferenceError on
+     click. Fix: implemented in exports.js — re-applies the saved panel
+     visibility via loadAppSettings() with a "nothing saved" guard.
+
+  4. saveCustomTemplate crashed with 2+ element blocks (letters.js)
+     Dynamically added element blocks (addDocumentElement) contain only
+     TextBox/ImageBox tabs — no table inputs. The extraction loop called
+     .value on document.getElementById("customTableRoleName-2") → null →
+     TypeError, so templates with more than one element block could never be
+     saved. Fix: null-safe _val()/_num() helpers for ALL per-index inputs.
+     Bonus fix: table coords were validated with isNaN(string) where
+     isNaN("") === false, so empty inputs passed validation and produced
+     broken translate() transforms. Now parsed with parseFloat first.
+
+  5. Raw export wrote JSON content into a .svg file (exports.js)
+     "fileMode" is unset in sessionStorage until the user toggles the export
+     format switch. confirmRawExportFile treated null as "not json" for the
+     extension (→ .svg) but "not html" for the content (→ JSON): mismatched
+     output. Fix: default fileMode to "json". saveExportMode also toggled the
+     wrong way on first use (default "html" → first toggle produced "json",
+     same as the real default, so the switch did nothing); now defaults to
+     "json" and toggles json ⇄ html(SVG) correctly.
+
+  6. SVG raw import nested the entire canvas inside page 1 (imports.js)
+     The exported SVG is the FULL workspace (rulers, page rects, watermarks,
+     all pages). Import did contentLayer.innerHTML = content, nesting a second
+     complete canvas with duplicated ids inside page 1. Fix: the file is now
+     parsed with DOMParser; only the children of each content-layer-N group
+     are imported into the matching page, page count is synced, interactions
+     are re-attached, and element counters refresh.
+
+  MODERATE
+
+  7. Table row/column resize broke cell editing (canvas-elements.js)
+     updateTableDimensions rebuilt cells WITHOUT ids or the cell-text class.
+     After any resize, right-click cell editing crashed (the editor looks up
+     `${tableId}-RxCy` ids). Fix: rebuilt cells get proper ids + class, the
+     existing cell text is preserved across the resize (was wiped before),
+     captureSnapshot() runs first so the resize is undoable, and the drag
+     grip (removed by replaceChildren) is re-added.
+
+  8. Duplicate element ids (workspace.html)
+     - id="pageType5" used for both C5_E and Num10_E → Num10_E is now
+       pageType6 (JS only uses the .pagetype class, so safe).
+     - id="confirmExportPDFBtn" used on THREE modal buttons (PDF export, raw
+       export, raw import) → now confirmRawExportFileBtn /
+       confirmRawImportFileBtn.
+
+  9. Import stats crashed/NaN'd for .svg files (imports.js, scripts.js)
+     stats.fileImports had only {html, json} keys; importing an .svg file did
+     undefined += 1 → NaN. Also fileName.split(".")[1] read the FIRST dot, so
+     "my.backup.json" yielded extension "backup". Fix: extension now read via
+     .pop().toLowerCase(); stats objects in setDefaults gained svg keys; both
+     export and import stat updates guard unknown keys.
+
+  10. "Hide all" left-panel toggle missed two panels (layout.js)
+      The 'all-left-hand-side' list omitted safe-zone-controls and
+      print-controls (saveAppSettings persists all 8). Now consistent.
+
+  COSMETIC
+
+  11. Table grip dots invisible (canvas-elements.js)
+      addSvgTableGrip appended the blue pill AFTER the three white dots; SVG
+      paints in document order, so the pill covered the dots. Order swapped.
+
+
+--------------------------------------------------------------------------------
+4. ITEMS VERIFIED AS ALREADY DONE (stale entries in older assessments)
+--------------------------------------------------------------------------------
+
+  - Known issue #10 (06 June): "No mobile/touch support for drag" — touch
+    drag + long-press context menu IS implemented in canvas-interactions.js.
+  - Priority 2f (06 June): char/word count in the text context menu — already
+    implemented (ctxCharCount / ctxWordCount, live updating).
+  - initDB connection caching and event-driven stats refresh — done.
+
+
+--------------------------------------------------------------------------------
+5. PRIORITY 2 POINTERS (UX — next up)
+--------------------------------------------------------------------------------
+
+  a. Inline table cell editing on double-click. makeTableEditable remains
+     commented out; cell editing only works via the context menu input.
+     Recommended approach: SVG <foreignObject> with an <input>, positioned
+     over the double-clicked cell; commit on Enter/blur.
+
+  b. Multi-page PDF export. exportAsPDF rasterises the WHOLE canvas div (all
+     stacked pages + 15 mm gaps) into a single PDF page sized to one page —
+     multi-page documents come out vertically squashed. Recommended: capture
+     once, then slice the raster per page (page offset = RULER_SIZE_MM +
+     (p-1)*(pageH+PAGE_GAP_MM)) and pdf.addPage() per page.
+
+  c. Settings modal: add individual visibility toggles for safe-zone-controls
+     and print-controls (persisted by saveAppSettings but not toggleable
+     individually), and persist right-panel visibility (app-downloads,
+     document-version-history, document-audit-history are toggleable but
+     never saved; app-storage-usage has no toggle at all).
+
+  d. Image rotate and flip use the same transform attribute on the <image>
+     element — applying one overwrites the other. Compose them into a single
+     transform list (rotate + scale + translate).
+
+  e. updateTableDimensions uses fixed colWidth 20 mm / rowHeight 10 mm and
+     getCTM() (which includes zoom) for position math — custom cell sizes are
+     reset and limits are wrong while zoomed. Read existing cell geometry
+     instead.
+
+  f. preview/exit-preview does not restore .text-highlight visibility for the
+     focused element (minor; re-focus restores it).
+
+  g. exitPreviewMode forces zoom back to 1 even if the user was at a custom
+     zoom before preview — store and restore the prior zoom level.
+
+
+--------------------------------------------------------------------------------
+6. PRIORITY 3 POINTERS (architecture)
+--------------------------------------------------------------------------------
+
+  a. Split scripts.js (~1 270 lines) into logical modules: db.js, zoom.js,
+     undo-redo.js, modals.js, init.js. Keep load order explicit in
+     workspace.html; wrap each in an IIFE to shrink the global surface.
+
+  b. Separate login-page JS from workspace JS. index.html only needs the DB
+     helper layer (initDB, saveRecordToDB, getAllRecordsFromDB,
+     checkLoginUser) — extract those into shared-db.js and stop loading the
+     full scripts.js on the login page (the id-collision bug fixed this
+     session is exactly the class of failure this split prevents).
+
+  c. Template variables. LETTER/INVOICE/ENVELOPE_LAYOUT_ELEMENTS contain
+     hardcoded sample data — replace with {{sender_name}}-style placeholders
+     plus a small fill-in form at insert time.
+
+  d. Vector PDF export via svg2pdf.js for sharp text (current html2canvas
+     pipeline rasterises at 3×).
+
+  e. Replace the `(STORE_NAME = storeName)` implicit-global argument pattern
+     (exports.js, imports.js, stats.js) with plain positional arguments —
+     it breaks under strict mode / bundling.
+
+  f. The .documenttype / .pagetype listeners attach via querySelectorAll at
+     load; if dropdowns ever render dynamically, switch to event delegation.
+
+  g. Remove dead code: commented-out blocks in letters.js (old
+     saveCustomTemplate body), scripts.js, and legacy files
+     (index_old*.html, workspace1.html, style1.css, website_index.html)
+     could move to an /archive folder.
+
+
+--------------------------------------------------------------------------------
+7. FILES TOUCHED THIS SESSION
+--------------------------------------------------------------------------------
+
+  workspace.html        darkModeCheckbox + splashScreenCheckbox ids, SVG label,
+                        pageType6, unique confirm-button ids.
+  index.html            splash id renamed (workspace → splash-shell),
+                        splash-skip when setting disabled.
+  scripts.js            settingsModal null guard, checkbox sync via ids,
+                        stats svg keys.
+  darkmode.js           _syncDarkModeCheckbox on load + after toggle.
+  exports.js            saveExportMode/json default, toggleSplashScreen,
+                        restoreAppSettings, export-stats guard.
+  imports.js            extension parsing, SVG import rebuilt, import-stats
+                        guard.
+  letters.js            null-safe template form extraction + numeric parsing.
+  canvas-elements.js    table resize (ids/class/content/grip/undo), grip
+                        paint order.
+  layout.js             hide-all list completed.
+
+  Verification: node --check passes on all 10 JS files; no duplicate ids
+  remain in workspace.html or index.html; every onclick/onchange/oninput
+  handler in both pages resolves to a defined function.
+
+================================================================================
+  END OF ASSESSMENT
+================================================================================

@@ -1,0 +1,308 @@
+PROJECT ASSESSMENT — PrintFlow v7
+Date: 02 June 2026 (v2 — updated post session)
+Files examined: scripts.js, exports.js, imports.js, layout.js, letters.js,
+                stats.js, darkmode.js, workspace.html, index.html,
+                style.css, index.css, help.js
+Compared against: project_assessment_02_june_2026.txt (prior rating: ~75-80%)
+
+========================================================
+EXECUTIVE SUMMARY
+========================================================
+
+Previous rating: ~75-80% of a usable v1
+Current rating:  ~90-92%
+
+A large volume of work was completed in the session since the last assessment.
+The remaining gaps are UI polish items and one data format issue — none block
+the primary use case (compose a print document, export it, manage versions).
+
+========================================================
+SECTION 1 — WHAT WAS COMPLETED SINCE LAST ASSESSMENT
+========================================================
+
+The following items were listed as remaining in the June 2026 v1 assessment
+and have now been fully resolved:
+
+1. SVG-NATIVE CANVAS DRAG HANDLES (Images)
+   Previously: resize only via context-menu input.
+   Now: 4 corner SVG rect handles (NW/NE/SE/SW) drawn inside the image group.
+   Drag in SVG coordinate space, minimum 10mm enforced, handles reposition on
+   every drag frame. Handles excluded from PDF export, SVG export, preview mode,
+   print CSS, JSON serialisation, and undo/redo snapshots.
+   STATUS: COMPLETE ✅
+
+2. DB CONNECTION CACHING
+   Previously: `initDB()` opened a fresh IndexedDB connection on every call.
+   Now: `_dbPromise` module-level cache. Connection opened once and reused.
+   On error the cache is cleared so the next call retries cleanly.
+   STATUS: COMPLETE ✅
+
+3. EVENT-DRIVEN STATS PANEL
+   Previously: `setInterval` polling every 5 seconds (3 DB transactions/tick).
+   Now: `saveRecordToDB` dispatches `printflow:dbwrite` custom event on success.
+   `stats.js` listens for that event and refreshes only on actual DB writes.
+   STATUS: COMPLETE ✅
+
+4. MULTI-PAGE SUPPORT (up to 5 pages)
+   Previously: single-page engine, no concept of multiple pages.
+   Now:
+   — Pages stack vertically in the SVG with a 15mm gap between them.
+   — Each page owns `pageGroup-N`, `pageRect-N`, `grid-layer-N`,
+     `safeZone-N`, `content-layer-N`.
+   — Click any page to activate it (current page stored in sessionStorage).
+   — Add/Remove page buttons in left panel with live "N / Total" badge.
+   — Maximum 5 pages enforced with user-facing toast.
+   — All element-add functions (addTextBox, addTableBox, addImageBox) write
+     to the active page's content-layer.
+   — toggleGrid, toggleSafeZone, changeSafeZoneSize, preview mode, clearCanvas
+     all operate across all pages simultaneously.
+   — Undo/redo captures and restores all pages in a single snapshot.
+   STATUS: COMPLETE ✅
+
+5. PER-PAGE RULERS (0-ORIGIN PER PAGE)
+   Previously: left ruler ran continuously (e.g. page 2 showed 297–594mm).
+   Now: left ruler resets to 0 at the top of each page. Tick marks draw at the
+   correct SVG y-offset for each page separately. Gap area has no tick marks.
+   Top ruler unchanged (always 0 to pageWidth).
+   STATUS: COMPLETE ✅
+
+6. PAGE WATERMARK
+   Previously: no page number visible on canvas.
+   Now: faint "Page N" text (font-size 22mm, opacity 0.10, pointer-events none)
+   in the top-right corner of each page. Not shown in: PDF export
+   (ignoreElements), SVG export (temp hidden), preview mode, print @media.
+   Not serialised in JSON snapshots or templates.
+   STATUS: COMPLETE ✅
+
+7. UNIFIED JSON FORMAT (DOM JSON everywhere)
+   Previously: two incompatible formats — export/import used raw DOM JSON,
+   templates used a semantic {type, role, x, y, w, textContent} format.
+   Also: `saveCurrentVersion` had a bug where it saved to BOTH
+   `printingTemplates` AND `printingVersionLogs`.
+   Now:
+   — Single format: `{ tagName, attributes, children }` (DOM JSON) everywhere.
+   — Export JSON: `{ format:"printflow", version:"2.0", pageSize, pageCount,
+     pages: [{ pageNo, elements: [...domToJson] }] }`.
+   — Import: detects new format or old flat array (backward compat = page 1).
+   — Template gallery: `{ id, name, pageType, format:"dom-json",
+     elements: [...domToJson] }` loaded via `jsonToDom()`.
+   — `saveCurrentVersion` fixed: now writes only to `printingVersionLogs`.
+   — `saveCustomTemplate` saves a DOM JSON snapshot of the current canvas.
+   STATUS: COMPLETE ✅
+
+8. SVG-NATIVE INTERACTION AUDIT
+   Previously: `updateBoxPosition()` (CSS style.left/top — no-op for SVG)
+   called from drag `onMove`; context menu position used hardcoded pixel
+   divisors (3.75, 4) instead of the canonical PX_PER_MM constant.
+   Now:
+   — Dead `updateBoxPosition` call removed from `onMove`. SVG transform is the
+     only source of truth for element position.
+   — Context menu positioning uses `PX_PER_MM` (96/25.4).
+   — `pxToMm` / `mmToPx` use the active page's `pageRect-N` rect.
+   — `_alignElement` uses the active page's rect for mm conversion.
+   STATUS: COMPLETE ✅
+
+9. UNDO/REDO CIRCULAR BUTTONS
+   Previously: keyboard-only (Ctrl+Z/Y).
+   Now: two circular buttons (white bg, blue icon, card-shadow) above the canvas
+   with mt-3 top spacing. Dark mode variant included. Both call existing
+   undo()/redo() functions (no duplicate logic).
+   STATUS: COMPLETE ✅
+
+10. GRID VISIBLE BY DEFAULT
+    Previously: grid hidden on init.
+    Now: `gridLayer.style.display = "block"` in `buildOnePageGroup`, and
+    `setDefaults` sets `gridLinesDisplay: "true"`. Restore logic treats any
+    non-"false" value as visible (safe default).
+    STATUS: COMPLETE ✅
+
+11. TOAST SYSTEM OVERHAULED
+    Previously: custom `toast-${type}` classes with no CSS definitions, meaning
+    toasts showed in Bootstrap's default unstyled (white) regardless of type.
+    "error" type was passed in some places despite not being a valid type.
+    Now:
+    — `showToast` applies Bootstrap `bg-success/warning/danger/info` + matching
+      text class (`text-white` or `text-dark` for warning/info).
+    — "error" normalised to "danger" at runtime.
+    — All `(type = "error")` call-site patterns corrected to `"danger"`.
+    STATUS: COMPLETE ✅
+
+12. NATIVE DIALOG REPLACEMENT
+    Previously: `restoreVersion` used `window.confirm()`.
+    Now: `showConfirmModal(title, message, onConfirm)` helper drives a proper
+    Bootstrap modal with Cancel / Confirm buttons. `confirmActionModal` HTML
+    added to workspace.html.
+    STATUS: COMPLETE ✅
+
+13. UBUNTU FONT APPLIED EVERYWHERE
+    Previously: Inter (Google Fonts) on all pages.
+    Now: Ubuntu 300/400/700 (light/normal/bold) via Google Fonts on both
+    workspace.html and index.html. style.css and index.css updated:
+    — 700 bold: headings h1–h6, navbar, modal titles, card headers, buttons,
+      badges, left-panel section titles.
+    — 400 normal: labels, table cells, inputs, dropdowns, body text.
+    — 300 light: .text-muted, .small, .form-text, all left/right panel
+      font-size helper classes.
+    STATUS: COMPLETE ✅
+
+14. ACTIVE PAGE BORDER REMOVED
+    Previously: clicking a page applied a blue stroke to its border rect.
+    Now: `setActivePage` only adds/removes the `active-page` CSS class
+    (no stroke changes). No visual border highlight.
+    STATUS: COMPLETE ✅
+
+========================================================
+SECTION 2 — WHAT IS STILL INCOMPLETE
+========================================================
+
+The following items remain open, ordered by impact:
+
+1. CUSTOM TEMPLATE FORM UX DISCONNECT (Low-Medium)
+   The "Create Template" modal in workspace.html still shows a form with
+   role/x/y/w/textContent inputs per element. `saveCustomTemplate()` in
+   letters.js now IGNORES this form data entirely and instead saves a DOM JSON
+   snapshot of the current active canvas. The form inputs are never read.
+   Result: the UX implies building a template from scratch via form, but
+   actually the template = whatever is on the canvas right now.
+   Fix: either (a) update the modal UI to say "Save current canvas as template"
+   and remove the element form, or (b) rewire the form to actually add elements
+   to a temporary hidden layer before snapshotting.
+
+2. FONT FAMILY SELECTOR FOR TEXT BOXES (Low-Medium)
+   The text box context menu exposes: font size, bold, italic, and text content.
+   Font family is not exposed. SVG text elements support `font-family` as an
+   attribute, so a `<select>` of web-safe or embedded fonts in the context menu
+   would be a straightforward addition.
+
+3. TEXT COLOUR PICKER (Low)
+   No colour control for text boxes. SVG `fill` attribute on `<text>` could be
+   toggled via a small `<input type="color">` in the context menu.
+
+4. MULTI-PAGE PDF OUTPUT (Low)
+   `exportAsPDF` captures the entire `#canvas` div (all pages stacked) as one
+   tall PNG via html2canvas, then embeds it in a single jsPDF page. This works
+   but produces a tall single-page PDF. For print-ready multi-page PDF (one PDF
+   page per canvas page), jsPDF's `addPage()` and per-page html2canvas captures
+   would need to be wired up.
+
+5. AUTO-SAVE (Not started — low priority)
+   Manual version save exists and undo/redo covers short-term mistakes.
+   No automatic periodic save. Low risk given the current undo depth (20 steps).
+
+6. `modifyStats` REDUNDANCY (Cosmetic)
+   `modifyStats()` increments/decrements sessionStorage counters for textBox,
+   imageBox, tableBox on add/remove. But `updateElementCounters()` now counts
+   live from the SVG DOM, so these sessionStorage values are never read back
+   for element counts. They remain correct for fileExports/fileImports.
+   No user-facing bug — just redundant writes on every add/remove.
+
+7. DARK MODE FOR USER-PLACED SVG CONTENT (Cosmetic)
+   The page rect (white paper), rulers (amber), grid (dark grey), and safe zone
+   are all correctly themed in dark mode. However text boxes, image boxes, and
+   tables placed by the user inherit SVG defaults in dark mode — they don't
+   automatically switch to a dark-mode-friendly palette. This is intentional
+   (print content should preview as it will print), but worth noting.
+
+8. COLLABORATION / CLOUD SYNC (Out of scope for v1)
+   Everything is local (IndexedDB + sessionStorage). No cloud. Not expected.
+
+========================================================
+SECTION 3 — FEATURE MATRIX (FULL)
+========================================================
+
+CANVAS & LAYOUT
+  SVG canvas with page size switching (A4/A5/C4/DL/C5/Num10)   ✅
+  Multi-page (up to 5 pages, click-to-activate)                 ✅
+  Per-page rulers, 0-origin per page                            ✅
+  Grid with 5/10/20mm size selector                             ✅
+  Grid visible by default                                        ✅
+  Snap to grid (real drag-time snapping)                         ✅
+  Safe zone with adjustable margin                               ✅
+  Print preview mode (proper toggle)                             ✅
+  Zoom in / out / reset (with ruler sync)                        ✅
+  Pointer coordinate tracking in mm                              ✅
+  Page watermark (excluded from all exports)                     ✅
+  Dark mode (persistent, SVG-themed)                             ✅
+
+ELEMENTS
+  Text boxes (draggable, SVG-native, text wrapping)              ✅
+  Image boxes (draggable, SVG-native, base64)                    ✅
+  Table boxes (draggable, cell editing, row/col resize)          ✅
+  SVG corner resize handles for images                           ✅
+  Image rotate / flip via context menu                           ✅
+  Image resize with aspect-ratio lock                            ✅
+  Font size, bold, italic for text                               ✅
+  Font family selector                                           ❌
+  Text colour picker                                             ❌
+  Z-order: bring front/forward/back/behind                       ✅
+  Alignment: 6 directions relative to page                       ✅
+  Lock / unlock all elements                                     ✅
+  Overlap warning on drop                                        ✅
+  Safe zone crossing warning during drag                         ✅
+  Element counters (live DOM count)                              ✅
+
+HISTORY & PERSISTENCE
+  Undo / redo (20-step in-memory, multi-page-aware)             ✅
+  Undo / redo circular buttons                                   ✅
+  Keyboard shortcuts Ctrl+Z / Ctrl+Y                             ✅
+  Version save (multi-page DOM JSON to IndexedDB)                ✅
+  Version restore (full rebuild with re-attached interactions)   ✅
+  Auto-save                                                      ❌
+
+EXPORT / IMPORT
+  Export as SVG (watermarks & handles hidden)                    ✅
+  Export as JSON (v2 multi-page format)                          ✅
+  Import JSON (v2 format + v1 flat array backward compat)        ✅
+  Import SVG                                                     ✅
+  PDF export (html2canvas + jsPDF, correct page dimensions)      ✅
+  Multi-page PDF (separate PDF pages)                            ❌
+  Print (browser print dialog)                                   ✅
+
+TEMPLATES
+  Preset: Letter (A4/A5/C4)                                      ✅
+  Preset: Invoice (A4/A5/C4)                                     ✅
+  Preset: Envelope (DL/C5/Num10)                                 ✅
+  Template gallery save (DOM JSON snapshot of canvas)            ✅
+  Template gallery load                                          ✅
+  Template gallery delete                                        ✅
+  Custom template creation form UX                               ⚠️ (UX disconnect)
+
+AUDIT & SETTINGS
+  Audit log (IndexedDB, all actions logged)                      ✅
+  Audit log PDF download                                         ✅
+  Help manual PDF download                                       ✅
+  App settings persistence (panel visibility)                    ✅
+  User login / logout (SHA-256 passwords)                        ✅
+
+INFRASTRUCTURE
+  IndexedDB connection caching                                   ✅
+  Event-driven stats (no polling)                                ✅
+  Toast notifications (Bootstrap-colored)                        ✅
+  Native window.confirm replaced with Bootstrap modal            ✅
+  Ubuntu font (300 light / 400 normal / 700 bold)                ✅
+
+========================================================
+SECTION 4 — OVERALL RE-RATING
+========================================================
+
+  Previous: ~75-80%
+  Current:  ~90-92%
+
+The app is now a solid, usable v1 for its primary purpose:
+compose a letter, invoice, or envelope layout; add text, images, and tables;
+adjust with alignment/z-order/snap; save versions; and export to PDF or SVG.
+
+The 8-10% gap is entirely in polish and convenience items (font/colour pickers,
+multi-page PDF, auto-save, template form UX). None of these block the core
+workflow. A professional printable output can be produced today.
+
+Suggested priority order for remaining work:
+  1. Custom template form UX — clarify "save canvas as template" ← 30 min
+  2. Font family selector in text context menu                   ← 1 hour
+  3. Text colour picker in text context menu                     ← 1 hour
+  4. Multi-page PDF (one PDF page per canvas page)               ← 2 hours
+  5. Auto-save (periodic captureSnapshot to IndexedDB)           ← 1 hour
+
+========================================================
+END OF ASSESSMENT
+========================================================
